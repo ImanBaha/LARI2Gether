@@ -1,46 +1,38 @@
-import Animated, {
-  useSharedValue,
-  withTiming,
-  useAnimatedStyle,
-  Easing,
-} from "react-native-reanimated";
-import { View, Button } from "react-native";
+import * as React from 'react';
+import { View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LoginScreen from './screens/LoginScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import Create from './MenuTab/Run';
+import Explore from './MenuTab/Activity';
+import Profile from './MenuTab/profile';
+import TabBar1 from './MenuTab/TabBar1';
+import Home from './MenuTab/Home';
+import EditProfile from './screens/EditProfile';
+import ActivityChart from './screens/ActivityChart';
+import PastRuns from './screens/PastRuns';
 
-export default function AnimatedStyleUpdateExample(props) {
-  const randomWidth = useSharedValue(10);
 
-  const config = {
-    duration: 500,
-    easing: Easing.bezier(0.5, 0.01, 0, 1),
-  };
+const Stack = createNativeStackNavigator();
 
-  const style = useAnimatedStyle(() => {
-    return {
-      width: withTiming(randomWidth.value, config),
-    };
-  });
-
+function App() {
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-      }}
-    >
-      <Animated.View
-        style={[
-          { width: 100, height: 80, backgroundColor: "black", margin: 30 },
-          style,
-        ]}
-      />
-      <Button
-        title="toggle"
-        onPress={() => {
-          randomWidth.value = Math.random() * 350;
-        }}
-      />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Login' screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="TabBar1" component={TabBar1} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="create" component={Create} />
+        <Stack.Screen name="explore" component={Explore} />
+        <Stack.Screen name="profile" component={Profile} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
+        <Stack.Screen name="ActivityChart" component={ActivityChart} />
+        <Stack.Screen name="PastRuns" component={PastRuns} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
+
+export default App;
