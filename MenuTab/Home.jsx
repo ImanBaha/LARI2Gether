@@ -1,36 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Text, View, ScrollView, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { Text, View, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
 import DailyMotivation from '../components/DailyMotivation'; // Import the DailyMotivation component
-import AchievementHighlights from '../components/AchievementHighlights';
 import CampusMapRoutes from '../components/CampusMapRoutes';
+import UpcomingChallenges from '../components/UpcomingChallenges';
 
 const { width } = Dimensions.get('window');
-
-// Sample review data
-const reviews = [
-  {
-    id: 1,
-    name: 'Iman',
-    text: 'Mount Kinabalu is one of the most popular hiking destinations in Sabah.',
-    likes: 458,
-    image: require('../assests/images/avatar.jpg'),
-  },
-  {
-    id: 2,
-    name: 'Amir',
-    text: 'A memorable experience, but it’s challenging and requires good preparation.',
-    likes: 324,
-    image: require('../assests/images/avatar.jpg'),
-  },
-  {
-    id: 3,
-    name: 'Aina',
-    text: 'Perfect for nature lovers and adventure seekers. Highly recommended!',
-    likes: 276,
-    image: require('../assests/images/avatar.jpg'),
-  },
-];
 
 const Home = () => {
   const navigation = useNavigation();
@@ -75,7 +51,7 @@ const Home = () => {
   };
 
   return (
-    <View style={styles.containerMain}>
+    <LinearGradient colors={['#0066b2', '#FFAA33']} style={styles.gradientContainer}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.headerMain}>
           <View style={styles.headerRowMain}>
@@ -93,7 +69,9 @@ const Home = () => {
           >
             <Image style={styles.mainImage} source={require("../assests/images/1.jpg")} />
             <Image style={styles.mainImage} source={require("../assests/images/2.jpg")} />
-            <Image style={styles.mainImage} source={require("../assests/images/5.jpg")} />
+            <Image style={styles.mainImage} source={require("../assests/images/view3.jpg")} />
+            <Image style={styles.mainImage} source={require("../assests/images/view1.jpg")} />
+            <Image style={styles.mainImage} source={require("../assests/images/view2.jpg")} />
           </ScrollView>
         </View>
 
@@ -105,46 +83,20 @@ const Home = () => {
         {/* Daily Motivation Component */}
         <DailyMotivation />
 
-         {/* Achievement Highlights */}
-    <AchievementHighlights />
+        <UpcomingChallenges />
 
-    {/* Campus Map with Popular Routes */}
-    <CampusMapRoutes />
-
-        <View style={styles.reviewContainerR}>
-          <TouchableOpacity onPress={() => navigation.navigate("Review")}>
-            <Text style={styles.reviewTitle}>Reviews</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Review")}>
-            <Text style={styles.addReviewText}>View more</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Dynamically render each review from the reviews array */}
-        {reviews.map(review => (
-          <View key={review.id} style={styles.reviewContainer}>
-            <View style={styles.reviewItem}>
-              <Image style={styles.profileImage} source={review.image} />
-              <View style={styles.textContainer}>
-                <Text style={styles.reviewerName}>{review.name}</Text>
-                <Text style={styles.reviewText}>{review.text}</Text>
-              </View>
-            </View>
-            <Text style={styles.likeText}>❤️️ {review.likes} people liked this</Text>
-          </View>
-        ))}
+        {/* Campus Map with Popular Routes */}
+        <CampusMapRoutes />
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 
 export default Home;
 
 const styles = StyleSheet.create({
-  containerMain: {
+  gradientContainer: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#F9F9F9',
   },
   scrollView: {
     paddingHorizontal: 10,
@@ -152,7 +104,6 @@ const styles = StyleSheet.create({
   headerMain: {
     width: '100%',
     height: 64,
-    backgroundColor: '#0066b2',
     borderRadius: 12,
     justifyContent: 'center',
     paddingHorizontal: 20,
@@ -183,9 +134,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 5,
+    alignItems: 'center', // Center the image horizontally
   },
   mainImage: {
-    width: width - 40,
+    width: width - 25,
     height: 200,
     borderRadius: 12,
     marginHorizontal: 10,
@@ -215,59 +167,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 3, // For Android shadow
-  },
-  reviewContainerR: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  reviewTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  addReviewText: {
-    fontSize: 14,
-    color: '#31997A',
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
-  },
-  reviewContainer: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-    marginBottom: 16,
-  },
-  reviewItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  reviewerName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  reviewText: {
-    fontSize: 14,
-    color: '#555',
-  },
-  likeText: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 8,
   },
 });

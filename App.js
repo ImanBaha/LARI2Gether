@@ -12,6 +12,9 @@ import Home from './MenuTab/Home';
 import EditProfile from './screens/EditProfile';
 import ActivityChart from './screens/ActivityChart';
 import PastRuns from './screens/PastRuns';
+import ListOfChallenges from './screens/ListOfChallenges';
+import ListOfProgress from './screens/ListOfProgress';
+import ProgressId from './screens/ProgressId';
 
 
 const Stack = createNativeStackNavigator();
@@ -30,6 +33,9 @@ function App() {
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="ActivityChart" component={ActivityChart} />
         <Stack.Screen name="PastRuns" component={PastRuns} />
+        <Stack.Screen name="ListOfChallenges" component={ListOfChallenges} />
+        <Stack.Screen name="ListOfProgress" component={ListOfProgress} />
+        <Stack.Screen name="ProgressId" component={ProgressId} />
       </Stack.Navigator>
     </NavigationContainer>
   );

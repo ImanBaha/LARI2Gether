@@ -148,6 +148,7 @@ export default function RunTracker() {
   };
 
   return (
+    
     <View style={styles.container}>
       <MapView
         style={styles.map}

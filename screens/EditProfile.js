@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Image, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, TextInput, Button, Image, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
+import Icon from 'react-native-vector-icons/Ionicons'; // Import the Ionicons icon library
 
 const EditProfile = () => {
   const navigation = useNavigation(); // Access navigation
@@ -19,6 +20,11 @@ const EditProfile = () => {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Go Back Icon */}
+      <TouchableOpacity style={styles.goBackIcon} onPress={() => navigation.goBack()}>
+        <Icon name="arrow-back" size={28} color="#000" />
+      </TouchableOpacity>
+
       <Text style={styles.headerText}>Edit Profile</Text>
 
       <View style={styles.avatarContainer}>
@@ -83,11 +89,17 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#F4F6FF',
   },
+  goBackIcon: {
+    position: 'absolute',
+    top: 30,
+    left: 0,
+    zIndex: 10,
+  },
   headerText: {
     textAlign: 'center',
     marginBottom: 30,
     marginTop: 20,
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   avatarContainer: {

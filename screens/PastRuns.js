@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';  // Import Ionicons
 
 export default function PastRuns() {
   const route = useRoute();
@@ -60,7 +62,7 @@ export default function PastRuns() {
   );
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#4A90F2', '#FAF9F6']} style={styles.container}>
       <Text style={styles.title}>Recent Activity</Text>
       <FlatList
         data={pastRuns}
@@ -69,74 +71,87 @@ export default function PastRuns() {
         contentContainerStyle={pastRuns.length === 0 ? styles.emptyContainer : null}
         ListEmptyComponent={<Text style={styles.emptyText}>No past runs available</Text>}
       />
-      <TouchableOpacity style={styles.continueButton} onPress={() => navigation.navigate('Run')}>
+      <TouchableOpacity style={styles.continueButton} onPress={() => navigation.goBack()}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    padding: 20,
+    paddingHorizontal: 20, // Add padding to the sides
   },
   title: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 10,
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#2F3A4B',
+    marginBottom: 15,
     textAlign: 'center',
-    marginTop:15,
+    marginTop: 35,
   },
   runItem: {
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    paddingVertical: 20,
+    paddingHorizontal: 25,
+    marginBottom: 20,
+    marginHorizontal: 1, // Ensure proper spacing from screen edges
     borderWidth: 1,
     borderColor: '#E0E0E0',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
   },
   runText: {
     fontSize: 16,
     color: '#333333',
-    marginVertical: 2,
+    marginVertical: 4,
+    lineHeight: 24,
   },
   deleteButton: {
-    backgroundColor: '#FF5252',
+    backgroundColor: '#FF5733',
     borderRadius: 8,
     alignSelf: 'flex-start',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    marginTop: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginTop: 15,
   },
   deleteButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    fontWeight: '600',
   },
   emptyContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 30,
   },
   emptyText: {
     fontSize: 18,
-    color: '#999999',
+    color: '#9E9E9E',
+    fontStyle: 'italic',
   },
   continueButton: {
     backgroundColor: '#4CAF50',
     borderRadius: 25,
-    paddingVertical: 12,
+    paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
+    marginHorizontal: 75, // Align with the run items
+    marginTop: 10,
+    marginBottom: 25,
   },
   continueButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
   },
+  goBackButton: {
+    paddingLeft: 10,
+    marginTop:30,
+  }
 });

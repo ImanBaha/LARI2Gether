@@ -5,6 +5,7 @@ import { TouchableOpacity } from 'react-native'
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
+import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
 
 export default function LoginScreen() {
     const navigation = useNavigation(); // Navigation hook
@@ -15,21 +16,19 @@ export default function LoginScreen() {
     }
 
     return (
-        <View className="bg-[#fcd34d] h-full w-full">
+        <LinearGradient
+            // Use the gradient colors for the background
+            colors={['#ffeb3b', '#ff9800']}// You can customize the gradient colors
+            style={{ flex: 1 }} // Make sure the gradient takes the full screen height and width
+        >
             <StatusBar style="light" />
             <Image className="h-full w-full absolute" source={require('../assests/images/background.png')} />
 
-           
-       
-   
             {/* lights */}
             <View className="flex-row justify-around w-full absolute">
-            
-                <Animated.Image entering={FadeInUp.delay(200).duration(1000).springify().damping(3)} className="h-[170] w-[155] ml-5 mt-6" source={require('../assests/images/Cloud.png')} />
-                <View>
-                    <LottieView style={{flex: 1}} source={require('../assests/Run3.json')} autoPlay loop className="mb-4 h-[305] w-[300] mr-1 "/>
-                    </View>
-                <Animated.Image entering={FadeInUp.delay(400).duration(1000).springify().damping(4)} className="h-[150] w-[125] mr-7" source={require('../assests/images/Cloud.png')} />
+                <Animated.Image entering={FadeInUp.delay(200).duration(1000).springify().damping(3)} className="h-[205] w-[80]" source={require('../assests/images/light.png')} />
+                <LottieView style={{flex: 1}} source={require('../assests/Run4.json')} autoPlay loop className="mt-5 h-[270] w-[100]"/>
+                <Animated.Image entering={FadeInUp.delay(400).duration(1000).springify().damping(4)} className="h-[140] w-[55]" source={require('../assests/images/light.png')} />
             </View>
 
             {/* title and form */}
@@ -64,9 +63,8 @@ export default function LoginScreen() {
                         </TouchableOpacity>
                     </Animated.View>
                 </View>
-
             </View>
-        </View>
+        </LinearGradient>
     )
 }
 
