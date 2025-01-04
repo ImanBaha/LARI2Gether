@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import * as Progress from 'react-native-progress';
 import { Ionicons } from '@expo/vector-icons';
 import { Icon } from 'react-native-elements';
-import UpcomingChallenges from '../components/UpcomingChallenges';
 import AchievementHighlights from '../components/AchievementHighlights';
 import WeeklyProgress from '../components/WeeklyProgress';
 import { LinearGradient } from 'expo-linear-gradient';
+import RunLevel from '../components/RunLevel';
 
 const Activity = () => {
   const navigation = useNavigation();
@@ -21,10 +20,6 @@ const Activity = () => {
 
   const goalDistance = 50;
 
-  const challenges = [
-    { title: '10km Fun Run', date: '2024-12-20' },
-    { title: 'Run 5 days in a row', date: '2024-12-25' },
-  ];
 
   useEffect(() => {
     const totalDistance = pastRuns.reduce((sum, run) => sum + run.distance, 0);
@@ -54,8 +49,7 @@ const Activity = () => {
           <Icon name="albums-outline" type="ionicon" size={24} color="#FFF" />
         </TouchableOpacity>
 
-        <UpcomingChallenges challenges={challenges} />
-
+        <RunLevel/>
         <WeeklyProgress 
           progress={progress} 
           totalDistance={pastRuns.reduce((sum, run) => sum + run.distance, 0)} 

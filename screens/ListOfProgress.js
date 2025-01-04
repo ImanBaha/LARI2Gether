@@ -64,7 +64,7 @@ const ListOfProgress = ({ navigation }) => {
 
   return (
     <LinearGradient
-    colors={['#A7F3D0', '#F0FDF4']}
+    colors={['#0066b2', '#FFAA33']}
       style={styles.container}
     >
       {/* Back Icon */}
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: '#FAF9F6',
   },
   listContainer: {
     paddingBottom: 20,
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   percentage: {
     marginTop: 5,
     fontSize: 14,
-    color: '#666',
+    color: '#DAA520',
   },
   viewMoreButton: {
     backgroundColor: '#059669',

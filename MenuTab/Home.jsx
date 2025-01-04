@@ -4,7 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
 import DailyMotivation from '../components/DailyMotivation'; // Import the DailyMotivation component
 import CampusMapRoutes from '../components/CampusMapRoutes';
-import UpcomingChallenges from '../components/UpcomingChallenges';
+import YouTubeVideo from '../components/YouTubeVideo'; // Import the YouTubeVideo component
+import NavCard from '../components/NavCard';
 
 const { width } = Dimensions.get('window');
 
@@ -38,57 +39,47 @@ const Home = () => {
     };
   }, []);
 
-  // Format the date to show only the day, month, time, and AM/PM
-  const formatDateTime = () => {
-    return dateTime.toLocaleString('en-GB', {
-      day: 'numeric',   // Day of the month
-      month: 'long',    // Full month name (e.g., November)
-      hour: 'numeric',  // Hour (12-hour format)
-      minute: 'numeric', // Minutes
-      second: 'numeric', // Seconds
-      hour12: true,      // AM/PM format
-    });
-  };
-
   return (
     <LinearGradient colors={['#0066b2', '#FFAA33']} style={styles.gradientContainer}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.headerMain}>
-          <View style={styles.headerRowMain}>
-            <Image style={styles.profileImageMain} source={require("../assests/images/L2G.png")} />
-            <Text style={styles.headerTextMain}>LARI2Gether</Text>
-          </View>
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.headerMain}>
+        <View style={styles.headerRowMain}>
+          <Image style={styles.profileImageMain} source={require("../assests/images/L2G.png")} />
+          {/* Wrap 'LARI2Gether' inside a Text component */}
+          <Text style={styles.headerTextMain}>LARI2Gether</Text>
         </View>
+      </View>
+  
+      {/* Other components */}
+      <DailyMotivation />
+  
+      <View style={styles.mainImageContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          ref={scrollViewRef}
+          pagingEnabled
+        >
+          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/1.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvMS5qcGciLCJpYXQiOjE3MzU1NzczNjQsImV4cCI6MTc2NzExMzM2NH0.LTKkk7meSrCDcYz-QOU5YNIfDTkYfiIsZ4J7WjyuI9o&t=2024-12-30T16%3A49%3A24.010Z" }} />
+          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/2.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvMi5qcGciLCJpYXQiOjE3MzU1Nzc0MDAsImV4cCI6MTc2NzExMzQwMH0._7D6_YmjIVkGqsvIjxkWsZ1yQ2lJNvKHgIEzb85gOIo&t=2024-12-30T16%3A49%3A59.497Z" }} />
+          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/3.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvMy5qcGciLCJpYXQiOjE3MzU1Nzc0MTgsImV4cCI6MTc2NzExMzQxOH0.wse2NAcKfyfQt4H8GU0Rnr711dkNGIOTHmiunqN7zso&t=2024-12-30T16%3A50%3A18.099Z" }} />
+          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/4.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvNC5qcGciLCJpYXQiOjE3MzU1Nzc0MzMsImV4cCI6MTc2NzExMzQzM30.-DGRMSgTb7lL0ghQNoDEUT3A2cZE-_wRUvzlXhCIEcs&t=2024-12-30T16%3A50%3A32.693Z" }} />
+          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/5.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvNS5qcGciLCJpYXQiOjE3MzU1Nzc0NTYsImV4cCI6MTc2NzExMzQ1Nn0.7KdfP28rpirnvODCQ8ZpzBkm_awziskm2_n_akQouW0&t=2024-12-30T16%3A50%3A56.057Z" }} />
+        </ScrollView>
+      </View>
+  
 
-        <View style={styles.mainImageContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            ref={scrollViewRef}
-            pagingEnabled
-          >
-            <Image style={styles.mainImage} source={require("../assests/images/1.jpg")} />
-            <Image style={styles.mainImage} source={require("../assests/images/2.jpg")} />
-            <Image style={styles.mainImage} source={require("../assests/images/view3.jpg")} />
-            <Image style={styles.mainImage} source={require("../assests/images/view1.jpg")} />
-            <Image style={styles.mainImage} source={require("../assests/images/view2.jpg")} />
-          </ScrollView>
-        </View>
-
-        {/* Date and Time Display */}
-        <View style={styles.dateTimeContainer}>
-          <Text style={styles.dateTimeText}>{formatDateTime()}</Text>
-        </View>
-
-        {/* Daily Motivation Component */}
-        <DailyMotivation />
-
-        <UpcomingChallenges />
-
-        {/* Campus Map with Popular Routes */}
-        <CampusMapRoutes />
-      </ScrollView>
-    </LinearGradient>
+      <NavCard/>
+  
+      {/* Campus Map with Popular Routes */}
+      <CampusMapRoutes />
+  
+      {/* YouTube Video Section */}
+      {/* Wrap 'Featured Video' inside a Text component */}
+      <Text style={styles.sectionTitle}>Campus Tour</Text>
+      <YouTubeVideo videoId="ZbChJzaDbqg" />
+    </ScrollView>
+  </LinearGradient>
   );
 };
 
@@ -107,7 +98,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     paddingHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 2,
     marginTop: 25,
   },
   headerRowMain: {
@@ -142,30 +133,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginHorizontal: 10,
   },
-  dateTimeContainer: {
-    alignItems: 'center',
-    marginVertical: 15,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
-    width: '90%',
-    alignSelf: 'center',
-    marginTop: 0,
-  },
-  dateTimeText: {
-    fontSize: 16, // Slightly larger font size
-    fontWeight: '700', // Bold weight for more power
-    color: '#1C1C1C', // Darker shade for contrast
-    letterSpacing: 1, // Increased letter spacing for a clean, modern look
-    textTransform: 'uppercase', // Making the text uppercase for added emphasis
-    shadowColor: '#000', // Adding shadow for a bit of depth
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 3, // For Android shadow
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 5,
+    color: '#ffffff',
   },
 });

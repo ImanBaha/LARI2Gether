@@ -1,14 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // For navigation
 import { Ionicons } from '@expo/vector-icons'; // Back icon
+import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
 
 const ProgressId = ({ route }) => {
   const { progressId, randomMessage } = route.params;
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#0066b2', '#FFAA33']} // Gradient colors
+      style={styles.gradientContainer}
+    >
       {/* Back Icon */}
       <Ionicons
         name="arrow-back"
@@ -20,7 +24,7 @@ const ProgressId = ({ route }) => {
 
       <View style={styles.content}>
         <Text style={styles.header}>Week {progressId} Progress</Text>
-        
+
         {/* Display Image */}
         <Image
           source={require("../assests/images/1.jpg")} // Replace with your image URL
@@ -29,18 +33,14 @@ const ProgressId = ({ route }) => {
 
         {/* Congratulatory Message */}
         <Text style={styles.message}>{randomMessage.message}</Text>
-
-        {/* Go Back Button */}
-        
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  gradientContainer: {
     flex: 1,
-    backgroundColor: '#059669',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#059669',
+    color: '#333',
     marginBottom: 40,
   },
   image: {
@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
   },
-//  
 });
 
 export default ProgressId;

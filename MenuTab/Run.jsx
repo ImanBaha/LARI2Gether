@@ -180,21 +180,6 @@ export default function RunTracker() {
       >
         <Icon name="albums-outline" size={24} color="#FFF" />
       </TouchableOpacity>
-
-      <View style={styles.infoContainer}>
-        <Text style={styles.timerText}>Running Time: {formatTime(elapsedTime)}</Text>
-        <View style={styles.statsContainer}>
-          <View style={styles.stat}>
-            <Icon name="walk-outline" size={24} color="#FF4500" />
-            <Text style={styles.statText}>{(distance / 1000).toFixed(2)} km</Text>
-          </View>
-          <View style={styles.stat}>
-            <Icon name="speedometer-outline" size={24} color="#FF4500" />
-            <Text style={styles.statText}>{pace.toFixed(2)} km/h</Text>
-          </View>
-        </View>
-      </View>
-
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.runButton}
@@ -210,6 +195,21 @@ export default function RunTracker() {
           <Icon name="stop-outline" size={30} color="#FFF" />
         </TouchableOpacity>
       </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.timerText}>Running Time: {formatTime(elapsedTime)}</Text>
+        <View style={styles.statsContainer}>
+          <View style={styles.stat}>
+            <Icon name="walk-outline" size={24} color="#FF4500" />
+            <Text style={styles.statText}>{(distance / 1000).toFixed(2)} km</Text>
+          </View>
+          <View style={styles.stat}>
+            <Icon name="speedometer-outline" size={24} color="#FF4500" />
+            <Text style={styles.statText}>{pace.toFixed(2)} km/h</Text>
+          </View>
+        </View>
+      </View>
+
+      
     </View>
   );
 }
@@ -217,11 +217,11 @@ export default function RunTracker() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#E2DFD2',
+    marginBottom: '28%'
   },
   map: {
-    width: '100%',
-    height: '70%',
+    flex: 1,
   },
   recordButton: {
     position: 'absolute',
@@ -241,7 +241,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     elevation: 5,
-    marginTop: 10,
+    top: 10,
+    marginBottom: 20,
   },
   timerText: {
     fontSize: 24,
@@ -263,24 +264,27 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    position: 'absolute',
-    bottom: 40,
     width: '100%',
+    height: '10%',
+    marginBottom: -70,
+    zIndex: 50,
+    bottom: 63,
+    left: 110,
   },
   runButton: {
-    width: 60,
-    height: 60,
+    width:55,
+    height: 55,
     borderRadius: 30,
     backgroundColor: '#007AFF',
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 3,
-    marginBottom:160,
-    marginLeft:290,
+    // marginBottom:160,
+    // marginLeft:290,
   },
   stopButton: {
-    width: 60,
-    height: 60,
+    width: 55,
+    height: 55,
     borderRadius: 30,
     backgroundColor: '#FF4500',
     justifyContent: 'center',

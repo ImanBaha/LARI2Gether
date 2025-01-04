@@ -1,27 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, Alert, TouchableOpacity, StyleSheet, ActivityIndicator, Animated, Button } from 'react-native';
+import { View, Text, FlatList, Alert, TouchableOpacity, StyleSheet, ActivityIndicator, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker'; // Image Picker for profile upload
 import { LinearGradient } from 'expo-linear-gradient';
+import { supabase } from '../lib/supabase';
+import Avatar from '../components/Avatar'; // Import Avatar component
 
 const profileOptions = [
-  { title: 'Language', icon: 'globe-outline' },
-  { title: 'Location', icon: 'location-outline' },
-  { title: 'Notifications', icon: 'notifications-outline' },
-  { title: 'Privacy Settings', icon: 'lock-closed-outline' },
-  { title: 'Subscription', icon: 'card-outline' },
+  { title: 'User Profile', icon: 'person-outline' },  // New option
+  { title: 'Settings', icon: 'settings-outline' },
+  { title: 'Achievements', icon: 'medal-outline' },
+  { title: 'Leaderboard', icon: 'podium-outline' },
+  { title: 'Terms and Conditions', icon: 'document-outline' },
   { title: 'Log Out', icon: 'log-out-outline' },
 ];
 
 const Profile = () => {
   const [loading, setLoading] = useState(true);
-  const [profilePic, setProfilePic] = useState(require('../assests/images/avatar.jpg'));
+  const [profilePic, setProfilePic] = useState(null);
   const [fadeAnim] = useState(new Animated.Value(0));
+  const [user, setUser] = useState(null);
   const navigation = useNavigation();
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 300);
+    const fetchUserData = async () => {
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError) {
+          console.error('Error fetching user:', userError);
+          setLoading(false);
+          return;
+        }
+        setUser(user);
+        // Fetch profile data
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('avatar')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Error fetching profile data:', profileError);
+        } else {
+          setProfilePic(profileData?.avatar || null);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 500,
@@ -32,20 +63,14 @@ const Profile = () => {
   const handleLogOut = () => {
     Alert.alert('Log Out', 'Are you sure you want to log out?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Log Out', onPress: () => navigation.navigate('Login') },
+      {
+        text: 'Log Out',
+        onPress: async () => {
+          await supabase.auth.signOut();
+          navigation.navigate('Login');
+        },
+      },
     ]);
-  };
-
-  const pickImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      alert('Permission to access camera roll is required!');
-      return;
-    }
-    const pickerResult = await ImagePicker.launchImageLibraryAsync();
-    if (!pickerResult.canceled) {
-      setProfilePic({ uri: pickerResult.assets[0].uri });
-    }
   };
 
   const renderItem = ({ item }) => (
@@ -54,6 +79,8 @@ const Profile = () => {
       onPress={() => {
         if (item.title === 'Log Out') {
           handleLogOut();
+        } else if (item.title === 'User Profile') {
+          navigation.navigate('UserProfile');  // Navigate to UserProfile screen
         }
       }}
     >
@@ -75,11 +102,9 @@ const Profile = () => {
   return (
     <LinearGradient colors={['#0066b2', '#FFAA33']} style={styles.container}>
       <Animated.View style={[styles.profileHeader, { opacity: fadeAnim }]}>
-        <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
-          <Image style={styles.avatar} source={profilePic} />
-        </TouchableOpacity>
-        <Text style={styles.nameText}>Iman Baha</Text>
-        <Text style={styles.emailText}>mhdnurimanbaha@gmail.com</Text>
+        <Avatar userId={user?.id} profilePic={profilePic} setProfilePic={setProfilePic} />
+        <Text style={styles.nameText}>{user?.email || 'User'}</Text>
+        <Text style={styles.emailText}>Welcome back!</Text>
         <TouchableOpacity
           style={styles.editButton}
           onPress={() => navigation.navigate('EditProfile')}
@@ -88,17 +113,6 @@ const Profile = () => {
           <Text style={styles.editButtonText}>Edit Profile</Text>
         </TouchableOpacity>
       </Animated.View>
-
-      <View style={styles.profileStats}>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>45</Text>
-          <Text style={styles.statLabel}>Total Runs</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>120 km</Text>
-          <Text style={styles.statLabel}>Distance</Text>
-        </View>
-      </View>
 
       <FlatList
         data={profileOptions}
@@ -117,22 +131,7 @@ const styles = StyleSheet.create({
   },
   profileHeader: {
     alignItems: 'center',
-    marginBottom: 24,
-  },
-  avatarContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 4,
-    borderColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 25,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    marginBottom: 10,
   },
   nameText: {
     fontSize: 22,
@@ -155,30 +154,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginLeft: 8,
   },
-  profileStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 16,
-    elevation: 3,
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#4A90E2',
-  },
-  statLabel: {
-    color: 'gray',
-  },
   listContainer: {
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 10,
+    marginTop: 20,
   },
   listItem: {
     paddingVertical: 15,

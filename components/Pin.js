@@ -49,9 +49,9 @@ export default class Pin extends React.PureComponent {
 const styles = StyleSheet.create({
   outerPin: {
     backgroundColor: 'rgba(233, 172, 71, 0.25)',
-    borderRadius: 40,
-    width: 40,
-    height: 40,
+    borderRadius: 50,
+    width: 50,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },

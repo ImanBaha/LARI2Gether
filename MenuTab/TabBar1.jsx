@@ -5,6 +5,7 @@ import Home from './Home';
 import TabBar from '../components/TabBar'; // Import your custom TabBar
 import Run from './Run';
 import Activity from './Activity';
+import Challenge from './Challenge';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,6 +29,11 @@ export default function TabBar1() {
                 name="Run" 
                 component={Run} 
                 options={{ tabBarLabel: 'Run' }}  
+            />
+             <Tab.Screen 
+                name="Challenge" 
+                component={Challenge} 
+                options={{ tabBarLabel: 'Challenge' }}  
             />
             <Tab.Screen 
                 name="Activity" 

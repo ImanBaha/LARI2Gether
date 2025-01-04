@@ -37,9 +37,9 @@ const WeeklyProgress = () => {
   const navigation = useNavigation();
 
   // Example Data
-  const weeklyProgress = 12; // Weekly distance covered in km
-  const totalDistance = 50; // Total distance covered in the month in km
-  const goalDistance = 20; // Weekly goal distance in km
+  const weeklyProgress = 27.30; // Weekly distance covered in km
+  const totalDistance = 113.45; // Total distance covered in the month in km
+  const goalDistance = 50; // Weekly goal distance in km
 
   const handleViewMore = () => {
     navigation.navigate('ListOfProgress');
