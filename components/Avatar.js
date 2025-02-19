@@ -8,6 +8,27 @@ const Avatar = ({ userId, profilePic, setProfilePic }) => {
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(profilePic);
 
+  const deleteOldImage = async (oldImageUrl) => {
+    try {
+      // Only attempt to delete if there's an existing image and it's not the default avatar
+      if (oldImageUrl && !oldImageUrl.includes('noProfile.jpg')) {
+        // Extract filename from the URL
+        const filename = oldImageUrl.split('/').pop();
+        
+        if (filename) {
+          const { error } = await supabase.storage
+            .from('avatars')
+            .remove([filename]);
+            
+          if (error) {
+            console.error('Error deleting old avatar:', error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error in deleteOldImage:', error);
+    }
+  };
 
   const pickImage = async () => {
     try {
@@ -20,7 +41,7 @@ const Avatar = ({ userId, profilePic, setProfilePic }) => {
 
       // Launch the image picker
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images, // Select only images
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 1,
       });
@@ -30,13 +51,15 @@ const Avatar = ({ userId, profilePic, setProfilePic }) => {
         return;
       }
 
+      setUploading(true);
+
       const selectedImage = result.assets[0];
-      // Read the file from the given URI as base64
+      // Read the file as base64
       const base64 = await FileSystem.readAsStringAsync(selectedImage.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      // Convert the base64 to ArrayBuffer
+      // Convert base64 to ArrayBuffer
       const byteCharacters = atob(base64);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) { 
@@ -44,23 +67,23 @@ const Avatar = ({ userId, profilePic, setProfilePic }) => {
       }
       const byteArray = new Uint8Array(byteNumbers);
 
-      setUploading(true);
-
       const fileExt = selectedImage.uri.split('.').pop()?.toLowerCase() || 'jpeg';
-      const filename = `${userId}.${fileExt}`;
+      // Generate unique filename using timestamp
+      const filename = `${userId}_${Date.now()}.${fileExt}`;
 
-      // Upload the image to Supabase Storage
+      // Upload new image
       const { data, error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filename, byteArray.buffer, {
-          contentType: "image/jpeg"
+          contentType: "image/jpeg",
+          upsert: false // Ensure we don't overwrite existing files
         });
 
       if (uploadError) {
         throw new Error(`Upload failed: ${uploadError.message}`);
       }
 
-      // Get the public URL of the uploaded image
+      // Get public URL
       const { data: publicUrlData, error: urlError } = supabase.storage
         .from('avatars')
         .getPublicUrl(data.path);
@@ -69,25 +92,30 @@ const Avatar = ({ userId, profilePic, setProfilePic }) => {
         throw new Error(`Failed to get public URL: ${urlError.message}`);
       }
 
-      const imageUrl = publicUrlData.publicUrl;
+      const newImageUrl = publicUrlData.publicUrl;
 
-      // Update the avatar in the `profiles` table
+      // Delete old image if it exists
+      if (avatarUrl) {
+        await deleteOldImage(avatarUrl);
+      }
+
+      // Update profile with new avatar URL
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ avatar: imageUrl })
+        .update({ avatar: newImageUrl })
         .eq('id', userId);
 
       if (updateError) {
         throw new Error(`Profile update failed: ${updateError.message}`);
       }
 
-      // Update local state with the new profile picture URL
-      setAvatarUrl(imageUrl);
-      setProfilePic({ uri: imageUrl });
+      // Update local state
+      setAvatarUrl(newImageUrl);
+      setProfilePic({ uri: newImageUrl });
 
-      Alert.alert('Success', 'Profile picture updated!');
+      Alert.alert('Success', 'Profile picture updated successfully!');
     } catch (error) {
-      Alert.alert('Error', error.message || 'Something went wrong.');
+      Alert.alert('Error', error.message || 'Failed to update profile picture.');
     } finally {
       setUploading(false);
     }
@@ -122,7 +150,7 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 45,
+    marginTop: 15,
     marginBottom: 12,
   },
   avatar: {

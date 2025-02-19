@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SupabaseClient } from '@supabase/supabase-js';
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import Create from './MenuTab/Run';
@@ -13,8 +11,6 @@ import Home from './MenuTab/Home';
 import EditProfile from './Profile/EditProfile';
 import ActivityChart from './screens/ActivityChart';
 import PastRuns from './screens/PastRuns';
-import ListOfProgress from './screens/ListOfProgress';
-import ProgressId from './screens/ProgressId';
 import ArenaDetails from './Places/ArenaDetails';
 import OldCampusLoopDetails from './Places/OldCampusLoopDetails';
 import KZCollegeDetails from './Places/KZCollegeDetails';
@@ -28,6 +24,11 @@ import AddNote from './Notes/AddNote';
 import UpdateNote from './Notes/UpdateNote';
 import UserProfile from './Profile/UserProfile';
 import ViewRL from './screens/ViewRL';
+import ViewLeaderboard from './screens/ViewLeaderboard';
+import RunTracker from './MenuTab/Run';
+import HealthProfile from './screens/HealthProfile';
+import ViewParticipants from './Challenge/ViewParticipants';
+import ViewHP from './Challenge/ViewHP';
 
 
 
@@ -47,8 +48,6 @@ function App() {
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="ActivityChart" component={ActivityChart} />
         <Stack.Screen name="PastRuns" component={PastRuns} />
-        <Stack.Screen name="ListOfProgress" component={ListOfProgress} />
-        <Stack.Screen name="ProgressId" component={ProgressId} />
         <Stack.Screen name="ArenaDetails" component={ArenaDetails} />
         <Stack.Screen name="OldCampusLoopDetails" component={OldCampusLoopDetails}/>
         <Stack.Screen name="KZCollegeDetails" component={KZCollegeDetails}/>
@@ -62,6 +61,11 @@ function App() {
         <Stack.Screen name="UpdateNote" component={UpdateNote}/>
         <Stack.Screen name="UserProfile" component={UserProfile}/>
         <Stack.Screen name="ViewRL" component={ViewRL}/>
+        <Stack.Screen name="ViewLeaderboard" component={ViewLeaderboard}/>
+        <Stack.Screen name="RunTracker" component={RunTracker}/>
+        <Stack.Screen name="HealthProfile" component={HealthProfile}/>
+        <Stack.Screen name="ViewParticipants" component={ViewParticipants}/>
+        <Stack.Screen name="ViewHP" component={ViewHP}/>
        
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Avatar from '../components/Avatar'; // Import the Avatar component
 
 const UserProfile = () => {
   const navigation = useNavigation();
-
-  // State for user profile data
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [profilePic, setProfilePic] = useState(null);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        // Fetch the current authenticated user from Supabase
         const { data, error } = await supabase.auth.getUser();
         
         if (error) {
@@ -26,29 +25,29 @@ const UserProfile = () => {
 
         const user = data.user;
         if (user) {
-          // Fetch profile data from the 'profiles' table using user.id
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
-            .select('username, fullname, age, contact, gender, address')
-            .eq('id', user.id)  // Ensure the profile is fetched for the current user
-            .single();  // Use single() since we expect only one result
+            .select('username, fullname, age, contact, gender, address, avatar')
+            .eq('id', user.id)
+            .single();
 
           if (profileError) {
             console.error('Error fetching profile data:', profileError);
             Alert.alert('Error', 'Failed to load profile details.');
           } else {
-            setUserProfile(profileData);  // Store the profile data
+            setUserProfile(profileData);
+            setProfilePic(profileData.avatar);
           }
         }
       } catch (error) {
         console.error('Error:', error);
         Alert.alert('Error', 'Something went wrong while fetching the profile.');
       } finally {
-        setLoading(false);  // Stop loading once the fetch is done
+        setLoading(false);
       }
     };
 
-    fetchUserProfile();  // Call the function to fetch the user profile
+    fetchUserProfile();
   }, []);
 
   if (loading) {
@@ -60,65 +59,97 @@ const UserProfile = () => {
   }
 
   return (
-    <LinearGradient colors={['#0066b2', '#FFAA33']} style={styles.container}>
-      {/* Go Back Icon */}
-      <TouchableOpacity style={styles.goBackIcon} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-back" size={28} color="#fff" />
-      </TouchableOpacity>
+    <LinearGradient colors={['#0066b2', '#ADD8E6', '#F0FFFF']} style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {/* Header Section */}
+        <View style={styles.headerSection}>
+          <TouchableOpacity style={styles.goBackIcon} onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" size={28} color="#FFAC1C" />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>User Profile</Text>
+        </View>
 
-      <Text style={styles.headerText}>User Profile</Text>
+        {/* Avatar Section */}
+        <View style={styles.avatarSection}>
+          <Avatar 
+            userId={userProfile?.id}
+            profilePic={profilePic}
+            setProfilePic={setProfilePic}
+          />
+          <Text style={styles.username}>{userProfile?.username || 'User'}</Text>
+        </View>
 
-      <View style={styles.card}>
-        {userProfile ? (
-          <>
-            <View style={styles.profileRow}>
-              <Icon name="person-outline" size={20} color="#0066b2" />
-              <Text style={styles.label}>Username</Text>
-            </View>
-            <Text style={styles.profileText}>{userProfile.username || 'N/A'}</Text>
+        {/* Profile Details Card */}
+        <View style={styles.card}>
+          {userProfile ? (
+            <>
+              <View style={styles.infoSection}>
+                <View style={styles.profileRow}>
+                  <Icon name="person" size={22} color="#0066b2" />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.label}>Full Name</Text>
+                    <Text style={styles.profileText}>{userProfile.fullname || 'N/A'}</Text>
+                  </View>
+                </View>
 
-            <View style={styles.profileRow}>
-              <Icon name="person" size={20} color="#0066b2" />
-              <Text style={styles.label}>Full Name</Text>
-            </View>
-            <Text style={styles.profileText}>{userProfile.fullname || 'N/A'}</Text>
+                <View style={styles.divider} />
 
-            <View style={styles.profileRow}>
-              <Icon name="calendar-outline" size={20} color="#0066b2" />
-              <Text style={styles.label}>Age</Text>
-            </View>
-            <Text style={styles.profileText}>{userProfile.age || 'N/A'}</Text>
+                <View style={styles.profileRow}>
+                  <Icon name="calendar-outline" size={22} color="#0066b2" />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.label}>Age</Text>
+                    <Text style={styles.profileText}>{userProfile.age || 'N/A'}</Text>
+                  </View>
+                </View>
 
-            <View style={styles.profileRow}>
-              <Icon name="call-outline" size={20} color="#0066b2" />
-              <Text style={styles.label}>Contact</Text>
-            </View>
-            <Text style={styles.profileText}>{userProfile.contact || 'N/A'}</Text>
+                <View style={styles.divider} />
 
-            <View style={styles.profileRow}>
-              <Icon name="information-circle-outline" size={20} color="#0066b2" />
-              <Text style={styles.label}>Gender</Text>
-            </View>
-            <Text style={styles.profileText}>{userProfile.gender || 'N/A'}</Text>
+                <View style={styles.profileRow}>
+                  <Icon name="call-outline" size={22} color="#0066b2" />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.label}>Contact</Text>
+                    <Text style={styles.profileText}>{userProfile.contact || 'N/A'}</Text>
+                  </View>
+                </View>
 
-            <View style={styles.profileRow}>
-              <Icon name="home-outline" size={20} color="#0066b2" />
-              <Text style={styles.label}>Address</Text>
-            </View>
-            <Text style={styles.profileText}>{userProfile.address || 'N/A'}</Text>
-          </>
-        ) : (
-          <Text style={styles.profileText}>No profile data available.</Text>
-        )}
+                <View style={styles.divider} />
 
-        {/* Edit button positioned at the bottom right of the card */}
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate('EditProfile')}
-        >
-          <Icon name="pencil" size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
+                <View style={styles.profileRow}>
+                  <Icon name="male-female-outline" size={22} color="#0066b2" />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.label}>Gender</Text>
+                    <Text style={styles.profileText}>{userProfile.gender || 'N/A'}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.divider} />
+
+                <View style={styles.profileRow}>
+                  <Icon name="home-outline" size={22} color="#0066b2" />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.label}>Address</Text>
+                    <Text style={styles.profileText}>{userProfile.address || 'N/A'}</Text>
+                  </View>
+                </View>
+              </View>
+            </>
+          ) : (
+            <Text style={styles.profileText}>No profile data available.</Text>
+          )}
+
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => navigation.navigate('EditProfile')}
+          >
+            <LinearGradient
+              colors={['#0066b2', '#0052cc']}
+              style={styles.editButtonGradient}
+            >
+              <Icon name="pencil" size={24} color="#fff" />
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </LinearGradient>
   );
 };
@@ -126,58 +157,101 @@ const UserProfile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 8,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  headerSection: {
+    paddingTop: 40,
+    paddingBottom: 0,
+    paddingHorizontal: 10,
   },
   goBackIcon: {
     position: 'absolute',
-    top: 30,
-    left: 15,
+    top: 40,
+    left: 20,
     zIndex: 10,
   },
   headerText: {
     textAlign: 'center',
-    marginBottom: 45,
-    marginTop: 30,
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#28282B',
+    marginTop: 0,
+    bottom: 10,
   },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: 0,
+    bottom: 5,
+  },
+  username: {
+    fontSize: 20,
     fontWeight: '600',
-    color: '#cc',
-    marginLeft: 10, // Added space for the icon
-  },
-  profileText: {
-    fontSize: 18,
-    marginBottom: 20,
-    color: '#cc',
+    color: '#28282B',
+    marginTop: 0,
   },
   card: {
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
     padding: 20,
+    flex: 1,
+    marginTop: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowRadius: 8,
     elevation: 5,
-    position: 'relative',
+    width: "100%",
+    },
+  infoSection: {
+    marginTop: 5,
   },
   profileRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    paddingVertical: 15,
+  },
+  textContainer: {
+    marginLeft: 15,
+    flex: 1,
+  },
+  label: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  profileText: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '600',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#eee',
+    marginVertical: 5,
   },
   editButton: {
     position: 'absolute',
-    bottom: 10,
-    right: 10,
-    backgroundColor: '#3366FF',
-    borderRadius: 50,
-    padding: 10,
+    bottom: 30,
+    right: 30,
     elevation: 5,
+  },
+  editButtonGradient: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFAA33', // Changed to the requested color
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   loadingContainer: {
     flex: 1,

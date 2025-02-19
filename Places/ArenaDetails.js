@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import DetailsCard from "../components/DetailsCard"; // Import your updated DetailsCard component
 import { Ionicons } from "@expo/vector-icons"; // Import an icon library for the location icon
+import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
 
 const { width } = Dimensions.get('window');
 
 const ArenaDetails = ({ route }) => {
   const { name } = route.params;
+  const navigation = useNavigation(); // Get the navigation object
 
   const [dateTime, setDateTime] = useState(new Date());
   const scrollViewRef = useRef(null);
@@ -56,7 +58,10 @@ const ArenaDetails = ({ route }) => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        
+        {/* Back Button */}
+                        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                          <Ionicons name="arrow-back" size={24} color="white" />
+                        </TouchableOpacity>
         {/* Location and Title Section */}
         <View style={styles.titleContainer}>
           <TouchableOpacity style={styles.locationIcon} onPress={() => openMap(3.728856, 101.532560)}>
@@ -75,24 +80,24 @@ const ArenaDetails = ({ route }) => {
             ref={scrollViewRef}
             pagingEnabled
           >
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/arena%20UPSI/au1.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcmVuYSBVUFNJL2F1MS5qcGciLCJpYXQiOjE3MzU1Nzc2MDMsImV4cCI6MTc2NzExMzYwM30.obDzkl4Z3aKdoAyTC1ToEe6cRqxkZcUQQzErXWeuqiY&t=2024-12-30T16%3A53%3A22.986Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/arena%20UPSI/au2.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcmVuYSBVUFNJL2F1Mi5qcGciLCJpYXQiOjE3MzU1Nzc2MjIsImV4cCI6MTc2NzExMzYyMn0.AaOrXLCZJY7vZDahy3amywq4Gc1t-aHXWccG8_cHFLY&t=2024-12-30T16%3A53%3A42.068Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/arena%20UPSI/au3.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcmVuYSBVUFNJL2F1My5qcGciLCJpYXQiOjE3MzU1Nzc2NDIsImV4cCI6MTc2NzExMzY0Mn0.6HfIogVEYQ1pgJbH0zz6F60fUr-N464Xir8i4-nepjg&t=2024-12-30T16%3A54%3A02.327Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/arena%20UPSI/au8.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcmVuYSBVUFNJL2F1OC5qcGciLCJpYXQiOjE3MzU1Nzc2NTksImV4cCI6MTc2NzExMzY1OX0.uwhFqY9WAxmtaygrLQ4MsJPxz2gO9CYxseOyZPj8xNs&t=2024-12-30T16%3A54%3A19.430Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/arena%20UPSI/au9.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcmVuYSBVUFNJL2F1OS5qcGciLCJpYXQiOjE3MzU1Nzc2ODgsImV4cCI6MTc2NzExMzY4OH0.0r31dIOX7wySJ6lsIf-W4BayKyVe4bkb1jQzmlbtrso&t=2024-12-30T16%3A54%3A47.922Z" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/arena%20UPSI/au1.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcmVuYSBVUFNJL2F1MS5qcGciLCJpYXQiOjE3MzY0ODY2NDgsImV4cCI6MjA1MTg0NjY0OH0.wIBHDgNag4-919g9JF-Crg8czQTNFdTHhMs9oycOLlw" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au2.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au3.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au8.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au9.jpg" }} />
           </ScrollView>
         </View>
 
         {/* Details Card Below Image Slider */}
         <DetailsCard
           title={name}
-          image={require("../assests/images/avatar.jpg")} // Replace with your image
           description={description}
           additionalDescription="With its accessible location and community-focused design, Arena UPSI supports runners in building endurance, staying active, and connecting through group runs and challenges, aligning perfectly with LARI2Gether's mission to foster a vibrant running community."
           location="Kampus Sultan Azlan Shah UPSI, Proton City"
-          // route="Main Arena, VIP Lounge, Courts"
-          // distance="Total Area: 10,000 sq meters"
-          // elevation="Multiple Elevated Seats for a panoramic view"
+          totalDistance="400m per lap (Standard Track)"
+          difficulty={2}
+          safety={4}
+          favLocation={4}
         />
       </ScrollView>
     </View>
@@ -112,6 +117,19 @@ const styles = StyleSheet.create({
     right: 20,
     left: 20,
     zIndex: 10,
+  },
+  backButton: {
+    position: "absolute",
+    top: 20,
+    left: 10,
+    zIndex: 20,
+    backgroundColor: "#0096FF",
+    padding: 10,
+    borderRadius: 50,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   locationIcon: {
     backgroundColor: "#0096FF",

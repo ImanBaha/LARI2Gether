@@ -4,14 +4,15 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../lib/supabase';
-import Avatar from '../components/Avatar'; // Import Avatar component
+import Avatar from '../components/Avatar';
+
 
 const profileOptions = [
-  { title: 'User Profile', icon: 'person-outline' },  // New option
-  { title: 'Settings', icon: 'settings-outline' },
-  { title: 'Achievements', icon: 'medal-outline' },
+  { title: 'User Profile', icon: 'person-outline' },
+  { title: 'Health Profile', icon: 'heart-outline' },
   { title: 'Leaderboard', icon: 'podium-outline' },
-  { title: 'Terms and Conditions', icon: 'document-outline' },
+  { title: 'Runs History', icon: 'timer-outline' },
+  { title: 'Running Journal', icon: 'document-outline' },
   { title: 'Log Out', icon: 'log-out-outline' },
 ];
 
@@ -32,7 +33,6 @@ const Profile = () => {
           return;
         }
         setUser(user);
-        // Fetch profile data
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('avatar')
@@ -80,13 +80,24 @@ const Profile = () => {
         if (item.title === 'Log Out') {
           handleLogOut();
         } else if (item.title === 'User Profile') {
-          navigation.navigate('UserProfile');  // Navigate to UserProfile screen
+          navigation.navigate('UserProfile');
+        } else if (item.title === 'Leaderboard') {
+          navigation.navigate('ViewLeaderboard');
+        } else if (item.title === 'Runs History') {
+          navigation.navigate('PastRuns');
+        } else if (item.title === 'Health Profile') {
+          navigation.navigate('HealthProfile');
+        } else if (item.title === 'Running Journal') {
+          navigation.navigate('Note');
         }
       }}
     >
       <View style={styles.itemContent}>
-        <Ionicons name={item.icon} size={24} color="#4A90E2" />
+        <View style={styles.iconWrapper}>
+          <Ionicons name={item.icon} size={24} color="#4A90E2" />
+        </View>
         <Text style={styles.itemText}>{item.title}</Text>
+        <Ionicons name="chevron-forward" size={20} color="#4A90E2" style={styles.chevron} />
       </View>
     </TouchableOpacity>
   );
@@ -100,9 +111,11 @@ const Profile = () => {
   }
 
   return (
-    <LinearGradient colors={['#0066b2', '#FFAA33']} style={styles.container}>
+    <LinearGradient colors={['#0066b2', '#ADD8E6', '#F0FFFF']} style={styles.container}>
       <Animated.View style={[styles.profileHeader, { opacity: fadeAnim }]}>
-        <Avatar userId={user?.id} profilePic={profilePic} setProfilePic={setProfilePic} />
+        <View style={styles.avatarContainer}>
+          <Avatar userId={user?.id} profilePic={profilePic} setProfilePic={setProfilePic} />
+        </View>
         <Text style={styles.nameText}>{user?.email || 'User'}</Text>
         <Text style={styles.emailText}>Welcome back!</Text>
         <TouchableOpacity
@@ -114,12 +127,15 @@ const Profile = () => {
         </TouchableOpacity>
       </Animated.View>
 
-      <FlatList
-        data={profileOptions}
-        keyExtractor={(item) => item.title}
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContainer}
-      />
+      <View style={styles.menuWrapper}>
+        <FlatList
+          data={profileOptions}
+          keyExtractor={(item) => item.title}
+          renderItem={renderItem}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     </LinearGradient>
   );
 };
@@ -127,54 +143,86 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 12, // Reduced from 16
   },
   profileHeader: {
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 15, // Reduced from 20
+    paddingTop: 15, // Reduced from 20
+  },
+  avatarContainer: {
+    marginBottom: 0, // Reduced from 15
   },
   nameText: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#28282B',
+    marginBottom: 4, // Reduced from 5
   },
   emailText: {
-    color: '#f0f0f0',
+    fontSize: 16,
+    color: '#28282B',
+    marginBottom: 12, // Reduced from 15
   },
   editButton: {
     flexDirection: 'row',
     backgroundColor: '#3366FF',
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginTop: 10,
+    paddingHorizontal: 18, // Reduced from 20
+    paddingVertical: 7, // Reduced from 8
     alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   editButtonText: {
     color: '#fff',
     marginLeft: 8,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  menuWrapper: {
+    backgroundColor: '#fff',
+    borderRadius: 12, // Reduced from 15
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   listContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
-    marginTop: 20,
+    padding: 10, // Reduced from 8
   },
   listItem: {
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    flexDirection: 'row',
+    marginBottom: 2,
+    backgroundColor: '#fff',
+    borderRadius: 8, // Reduced from 10
   },
   itemContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 12, // Reduced from 15
+  },
+  iconWrapper: {
+    width: 36, // Reduced from 40
+    height: 36, // Reduced from 40
+    borderRadius: 18, // Reduced from 20
+    backgroundColor: '#f0f8ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12, // Reduced from 15
   },
   itemText: {
-    fontSize: 18,
-    marginLeft: 10,
-    color: '#4A90E2',
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  chevron: {
+    opacity: 0.5,
   },
   loadingContainer: {
     flex: 1,

@@ -1,249 +1,363 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { supabase } from '../lib/supabase'; // Ensure you have configured the Supabase client
-import { LinearGradient } from 'expo-linear-gradient'; // Importing Expo Linear Gradient
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  StyleSheet, 
+  Alert, 
+  TouchableOpacity, 
+  ScrollView,
+  ActivityIndicator
+} from 'react-native';
+import { supabase } from '../lib/supabase';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import Avatar from '../components/Avatar';
 
-const EditProfile = () => {
-  const navigation = useNavigation();
-
-  // State for the new fields
+const EditProfile = ({ navigation }) => {
+  const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState('');
   const [fullname, setFullname] = useState('');
   const [age, setAge] = useState('');
   const [contact, setContact] = useState('');
   const [gender, setGender] = useState('');
   const [address, setAddress] = useState('');
+  const [profilePic, setProfilePic] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [formError, setFormError] = useState(null);
 
   useEffect(() => {
-    // Fetch the current profile data from the "profiles" table
-    const fetchProfile = async () => {
-      try {
-        // Get the user ID from auth
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (user) {
-          // Fetch user profile data from "profiles" table based on the user ID
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id) // Assuming the profile table has a reference to the user ID
-            .single(); // Assuming only one profile exists per user
-
-          if (error) {
-            console.error("Error fetching profile data:", error);
-            Alert.alert("Error", "Failed to load profile data.");
-            return;
-          }
-
-          // Set profile data to state
-          setUsername(data.username || '');
-          setFullname(data.fullname || '');
-          setAge(data.age || '');
-          setContact(data.contact || '');
-          setGender(data.gender || '');
-          setAddress(data.address || '');
-        }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        Alert.alert("Error", "Failed to load profile data.");
-      }
-    };
-
     fetchProfile();
   }, []);
 
-  const handleSubmit = async () => {
-    // Validate form inputs
-    if (!username || !fullname || !age || !contact || !gender || !address) {
-      setFormError("Please fill in all the fields.");
-      return;
-    }
+  const fetchProfile = async () => {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error) {
+        throw error;
+      }
 
-    // Prepare the update data (sending user profile fields)
-    const updateData = {
-      username,
-      fullname,
-      age,
-      contact,
-      gender,
-      address,
-    };
+      if (user) {
+        setUserId(user.id);
+        const { data, error: profileError } = await supabase
+          .from('profiles')
+          .select('username, fullname, age, contact, gender, address, avatar')
+          .eq('id', user.id)
+          .single();
 
-    // Update user profile in the "profiles" table (not in auth user metadata)
-    const { data, error } = await supabase
-      .from('profiles')
-      .update(updateData)
-      .eq('id', (await supabase.auth.getUser()).data.user.id); // Update based on user ID
+        if (profileError) {
+          throw profileError;
+        }
 
-    if (error) {
-      console.error("Error updating profile:", error);
-      setFormError("There was an issue updating your profile.");
-      Alert.alert("Error", "Failed to update profile.");
-    } else {
-      setFormError(null);
-      Alert.alert("Success", "Profile updated successfully!");
-      navigation.goBack(); // Navigate back after successful update
+        if (data) {
+          setUsername(data.username || '');
+          setFullname(data.fullname || '');
+          setAge(data.age ? data.age.toString() : '');
+          setContact(data.contact || '');
+          setGender(data.gender || '');
+          setAddress(data.address || '');
+          setProfilePic(data.avatar);
+        }
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Error loading profile data');
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <LinearGradient colors={['#0066b2', '#FFAA33']} style={styles.container}>
-      {/* Go Back Icon */}
-      <TouchableOpacity style={styles.goBackIcon} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-back" size={28} color="#fff" />
-      </TouchableOpacity>
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      
+      if (!username || !fullname) {
+        setFormError('Username and full name are required.');
+        return;
+      }
 
-      <Text style={styles.headerText}>Update Your Information</Text>
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          username,
+          fullname,
+          age: age ? parseInt(age) : null,
+          contact,
+          gender,
+          address,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', userId);
 
-      {formError && <Text style={styles.errorText}>{formError}</Text>}
+      if (error) {
+        throw error;
+      }
 
-      <View style={styles.card}>
-        {/* Header for the input form */}
+      Alert.alert(
+        'Success',
+        'Profile updated successfully!',
+        [{ text: 'OK', onPress: () => navigation.goBack() }]
+      );
+    } catch (error) {
+      setFormError('Error updating profile.');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        <Text style={styles.label}>Username</Text>
-        <TextInput
-          style={styles.input}
-          value={username}
-          placeholder="Enter your username"
-          onChangeText={setUsername}
-        />
-
-        <Text style={styles.label}>Full Name</Text>
-        <TextInput
-          style={styles.input}
-          value={fullname}
-          placeholder="Enter your full name"
-          onChangeText={setFullname}
-        />
-
-        <Text style={styles.label}>Age</Text>
-        <TextInput
-          style={styles.input}
-          value={age}
-          placeholder="Enter your age"
-          onChangeText={setAge}
-          keyboardType="numeric"
-        />
-
-        <Text style={styles.label}>Contact</Text>
-        <TextInput
-          style={styles.input}
-          value={contact}
-          placeholder="Enter your contact number"
-          onChangeText={setContact}
-          keyboardType="phone-pad"
-        />
-
-        <Text style={styles.label}>Gender</Text>
-        <View style={styles.genderButtonsContainer}>
-          <TouchableOpacity
-            style={[styles.genderButton, gender === 'Male' && styles.selectedGenderButton]}
-            onPress={() => setGender('Male')}
-          >
-            <Text style={styles.genderButtonText}>Male</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.genderButton, gender === 'Female' && styles.selectedGenderButton]}
-            onPress={() => setGender('Female')}
-          >
-            <Text style={styles.genderButtonText}>Female</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.label}>Address</Text>
-        <TextInput
-          style={styles.input}
-          value={address}
-          placeholder="Enter your address"
-          onChangeText={setAddress}
-        />
-
-        <View style={styles.buttonContainer}>
-          <Button title="Save Profile" onPress={handleSubmit} color="#3366FF" />
-        </View>
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0066b2" />
       </View>
+    );
+  }
+
+  return (
+    <LinearGradient
+      colors={['#0066b2', '#ADD8E6', '#F0FFFF']}
+      style={styles.gradient}
+    >
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#FFAC1C" />
+          </TouchableOpacity>
+          <Text style={styles.header}>Edit Profile</Text>
+          <View style={styles.headerRight} />
+        </View>
+
+        <View style={styles.card}>
+          <View style={styles.avatarSection}>
+            <Avatar
+              userId={userId}
+              profilePic={profilePic}
+              setProfilePic={setProfilePic}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputHeader}>Username</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter username"
+              placeholderTextColor="#999"
+              value={username}
+              onChangeText={setUsername}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputHeader}>Full Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter full name"
+              placeholderTextColor="#999"
+              value={fullname}
+              onChangeText={setFullname}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputHeader}>Age</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter age"
+              placeholderTextColor="#999"
+              value={age}
+              onChangeText={setAge}
+              keyboardType="numeric"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputHeader}>Contact</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter contact number"
+              placeholderTextColor="#999"
+              value={contact}
+              onChangeText={setContact}
+              keyboardType="phone-pad"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputHeader}>Gender</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter gender"
+              placeholderTextColor="#999"
+              value={gender}
+              onChangeText={setGender}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputHeader}>Address</Text>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Enter address"
+              placeholderTextColor="#999"
+              value={address}
+              onChangeText={setAddress}
+              multiline
+              textAlignVertical="top"
+            />
+          </View>
+
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity 
+              style={[styles.button, styles.submitButton]} 
+              onPress={handleSubmit}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Save Changes</Text>
+              )}
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.button, styles.cancelButton]} 
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.buttonText, styles.cancelButtonText]}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {formError && (
+            <View style={styles.errorBox}>
+              <Ionicons name="alert-circle" size={20} color="#e74c3c" />
+              <Text style={styles.error}>{formError}</Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
     </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  gradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    padding: 20,
+    padding: 13,
   },
-  goBackIcon: {
-    position: 'absolute',
-    top: 30,
-    left: 15,
-    zIndex: 10,
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    marginBottom: 0,
   },
-  headerText: {
-    textAlign: 'center',
-    marginBottom: 45,
-    marginTop: 30,
+  backButton: {
+    padding: 5,
+    marginLeft: 0,
+  },
+  header: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "black",
+    flex: 1,
+    textAlign: "center",
+    right: 10,
   },
-  formHeader: {
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: '600',
+  avatarSection: {
+    alignItems: 'center',
     marginBottom: 20,
-    color: '#333',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: '600',
-    color: '#cc',
-  },
-  input: {
-    marginBottom: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: '#ccc',
-    backgroundColor: '#fff',
-  },
-  buttonContainer: {
-    marginTop: 20,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 20,
-    textAlign: 'center',
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    backgroundColor: "#fff",
+    borderRadius: 15,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowRadius: 8,
     elevation: 5,
+    marginBottom: 30,
   },
-  genderButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+  inputGroup: {
     marginBottom: 20,
   },
-  genderButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#ddd',
-    borderRadius: 8,
-  },
-  selectedGenderButton: {
-    backgroundColor: '#3366FF',
-  },
-  genderButtonText: {
-    color: '#fff',
+  inputHeader: {
     fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 8,
+  },
+  input: {
+    height: 50,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    backgroundColor: "#fff",
+    color: "#333",
+  },
+  textArea: {
+    height: 100,
+    paddingTop: 12,
+  },
+  buttonGroup: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  button: {
+    flex: 1,
+    height: 50,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  submitButton: {
+    backgroundColor: "#0066b2",
+  },
+  cancelButton: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#e74c3c",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  cancelButtonText: {
+    color: "#e74c3c",
+  },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffebee',
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 15,
+  },
+  error: {
+    color: "#e74c3c",
+    marginLeft: 8,
+    fontSize: 14,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

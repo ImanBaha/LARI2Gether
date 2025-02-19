@@ -35,8 +35,8 @@ const styles = StyleSheet.create({
       position: 'relative', // Add position relative to position the button correctly
     },
     image: {
-      width: '65%',
-      height: 88,
+      width: '70%',
+      height: 105,
       alignSelf: 'center',
       borderRadius: 8,
       marginBottom: 20, 

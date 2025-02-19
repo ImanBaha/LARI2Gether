@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import DetailsCard from "../components/DetailsCard"; // Import your updated DetailsCard component
 import { Ionicons } from "@expo/vector-icons"; // Import an icon library for the location icon
+import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
 
 const { width } = Dimensions.get('window');
 
-const ArenaDetails = ({ route }) => {
+const KZCollegeDetails = ({ route }) => {
   const { name } = route.params;
+  const navigation = useNavigation(); // Get the navigation object
 
   const [dateTime, setDateTime] = useState(new Date());
   const scrollViewRef = useRef(null);
@@ -56,6 +58,10 @@ const ArenaDetails = ({ route }) => {
   return (
     <View style={styles.container}>
       <ScrollView>
+         {/* Back Button */}
+                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="white" />
+                </TouchableOpacity>
         {/* Location and Title Section */}
         <View style={styles.titleContainer}>
           <TouchableOpacity style={styles.locationIcon} onPress={() => openMap(3.723245,101.518724)}>
@@ -74,11 +80,11 @@ const ArenaDetails = ({ route }) => {
             ref={scrollViewRef}
             pagingEnabled
           >
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/zaba%20collage/zc1.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ6YWJhIGNvbGxhZ2UvemMxLmpwZyIsImlhdCI6MTczNTU3ODMyMSwiZXhwIjoxNzY3MTE0MzIxfQ.cM95xVOYxqmQGOoFQWbNe0ivKjnC4KdOD7Gn82cEfVo&t=2024-12-30T17%3A05%3A20.620Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/zaba%20collage/zc2.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ6YWJhIGNvbGxhZ2UvemMyLmpwZyIsImlhdCI6MTczNTU3ODMzNCwiZXhwIjoxNzY3MTE0MzM0fQ.CJjcDHpS1id1Uqgzan7152lhPFOuVhu3p-RsjlNwfNs&t=2024-12-30T17%3A05%3A33.622Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/zaba%20collage/zc3.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ6YWJhIGNvbGxhZ2UvemMzLmpwZyIsImlhdCI6MTczNTU3ODM0OSwiZXhwIjoxNzY3MTE0MzQ5fQ.bv_s6i6JBgznlSFEiibrNxk2dNxL3J4B1nBHfjR_WuM&t=2024-12-30T17%3A05%3A48.904Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/zaba%20collage/zc4%20.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ6YWJhIGNvbGxhZ2UvemM0IC5qcGciLCJpYXQiOjE3MzU1NzgzNjQsImV4cCI6MTc2NzExNDM2NH0.6F2w9LXAHpB-otMCqQooM8xWNytvGnQUiym18KnHpxs&t=2024-12-30T17%3A06%3A04.004Z" }}/>
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/zaba%20collage/zc5.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ6YWJhIGNvbGxhZ2UvemM1LmpwZyIsImlhdCI6MTczNTU3ODM4MywiZXhwIjoxNzY3MTE0MzgzfQ.DgdNBu9qZkDUMxUXSN4hwL2I1eXOn0mcHF6VjFH1ud4&t=2024-12-30T17%3A06%3A23.256Z" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc1.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc2.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc3.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc4%20.jpg" }}/>
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc5.jpg" }} />
           </ScrollView>
         </View>
 
@@ -88,12 +94,13 @@ const ArenaDetails = ({ route }) => {
           description={description}
           additionalDescription="For LARI2Gether users, Zaba College is more than just a hangout spot. It’s a great place to warm up with light activities before a run or to cool down and socialize post-run. The blend of sports facilities and community vibes makes it a perfect hub for group activities and fostering connections among runners."
           location="Kampus Sultan Azlan Shah UPSI, Proton City"
-          route="Main Arena, VIP Lounge, Courts"
-          distance="Total Area: 10,000 sq meters"
-          elevation="Multiple Elevated Seats for a panoramic view"
+          totalDistance="1.2km per lap (Standard Track)"
+          difficulty={3}
+          safety={3}
+          favLocation={4}
         />
       </ScrollView>
-    </View>
+    </View> 
   );
 };
 
@@ -110,6 +117,19 @@ const styles = StyleSheet.create({
     right: 20,
     left: 20,
     zIndex: 10,
+  },
+  backButton: {
+    position: "absolute",
+    top: 20,
+    left: 10,
+    zIndex: 20,
+    backgroundColor: "#0096FF",
+    padding: 10,
+    borderRadius: 50,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   locationIcon: {
     backgroundColor: "#0096FF",
@@ -147,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ArenaDetails;
+export default KZCollegeDetails;

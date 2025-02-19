@@ -1,45 +1,69 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-// Improved DetailsCard Component
+const StarRating = ({ rating, maxRating = 5 }) => {
+  return (
+    <View style={styles.starContainer}>
+      {[...Array(maxRating)].map((_, index) => (
+        <Ionicons
+          key={index}
+          name={index < rating ? "star" : "star-outline"}
+          size={20}
+          color={index < rating ? "#FFD700" : "#BBC0C4"}
+          style={styles.star}
+        />
+      ))}
+    </View>
+  );
+};
+
 const DetailsCard = ({
   description,
   additionalDescription,
   location,
-  route,
-  distance,
-  elevation,
+  totalDistance,
+  difficulty,
+  safety,
+  favLocation
 }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Combined Description Section */}
-      <View style={styles.section}>
+      {/* Location and Other Details */}
+      <View style={styles.detailsContainer}>
+        <View style={styles.detailSection}>
+          <Text style={styles.detailTitle}>Location</Text>
+          <Text style={styles.detailText}>{location}</Text>
+        </View>
+
+        <View style={styles.detailSection}>
+          <Text style={styles.detailTitle}>Total Distance</Text>
+          <Text style={styles.detailText}>{totalDistance}</Text>
+        </View>
+
+        <View style={styles.detailSection}>
+          <Text style={styles.detailTitle}>Difficulty</Text>
+          <StarRating rating={difficulty} />
+        </View>
+
+        <View style={styles.detailSection}>
+          <Text style={styles.detailTitle}>Safety</Text>
+          <StarRating rating={safety} />
+        </View>
+
+        <View style={styles.detailSection}>
+          <Text style={styles.detailTitle}>Favorite Location</Text>
+          <StarRating rating={favLocation} />
+        </View>
+      </View>
+
+      {/* Description Sections */}
+      <View style={styles.descriptionContainer}>
         <Text style={styles.description}>{description}</Text>
         {additionalDescription && (
           <Text style={styles.additionalDescription}>{additionalDescription}</Text>
         )}
       </View>
-
-      {/* Location and Other Details */}
-      <View style={styles.detailSection}>
-        <Text style={styles.detailTitle}>Location</Text>
-        <Text style={styles.detailText}>{location}</Text>
-      </View>
-{/* 
-      <View style={styles.detailSection}>
-        <Text style={styles.detailTitle}>Route</Text>
-        <Text style={styles.detailText}>{route}</Text>
-      </View>
-
-      <View style={styles.detailSection}>
-        <Text style={styles.detailTitle}>Distance</Text>
-        <Text style={styles.detailText}>{distance}</Text>
-      </View>
-
-      <View style={styles.detailSection}>
-        <Text style={styles.detailTitle}>Elevation</Text>
-        <Text style={styles.detailText}>{elevation}</Text>
-      </View> */}
     </ScrollView>
   );
 };
@@ -49,12 +73,42 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#F8F8F8",
     paddingBottom: 50,
+    gap: 20, // Add space between main sections
   },
-  section: {
-    marginBottom: 20,
-    width: 'Auto',
+  detailsContainer: {
     backgroundColor: "#fff",
     borderRadius: 10,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  detailSection: {
+    marginBottom: 20, // Increased spacing between sections
+    paddingBottom: 10, // Added padding at bottom of each section
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0', // Light separator between sections
+  },
+  detailSection: {
+    marginBottom: 20,
+  },
+  detailTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#0C215E",
+    marginBottom: 8, // Increased spacing between title and content
+  },
+  detailText: {
+    fontSize: 16,
+    color: "#0C215E",
+    lineHeight: 22,
+  },
+  descriptionContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -66,29 +120,19 @@ const styles = StyleSheet.create({
     color: "#0C215E",
     textAlign: "justify",
     lineHeight: 25,
-    marginBottom: 10,
-    padding: 13,
+    marginBottom: 20, // Added space between descriptions
   },
   additionalDescription: {
     fontSize: 16,
     color: "#0C215E",
     lineHeight: 22,
-    padding: 13,
-    bottom: 20,
   },
-  detailSection: {
-    marginBottom: 15,
+  starContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  detailTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#0C215E",
-    marginBottom: 5,
-  },
-  detailText: {
-    fontSize: 16,
-    color: "#0C215E",
-    lineHeight: 22,
+  star: {
+    marginRight: 4, // Increased spacing between stars
   },
 });
 

@@ -6,112 +6,289 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  ActivityIndicator,
   Alert,
+  Dimensions,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { supabase } from "../lib/supabase";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Animatable from "react-native-animatable";
+
+const { width } = Dimensions.get("window");
 
 const ViewCh = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { id } = route.params; // Get the challenge ID passed from the previous screen
+  const { id } = route.params;
 
   const [challenge, setChallenge] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [participantCount, setParticipantCount] = useState(0);
+  const [hasJoined, setHasJoined] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
+  // Fetch challenge data and check if current user has joined
   useEffect(() => {
-    const fetchChallenge = async () => {
-      const { data, error } = await supabase
+    fetchChallengeAndStatus();
+  }, [id]);
+
+  const fetchChallengeAndStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      const { data: challengeData, error: challengeError } = await supabase
         .from("challenge")
         .select("*")
         .eq("id", id)
         .single();
 
-      if (error) {
-        console.error("Error fetching challenge:", error);
-        Alert.alert("Error", "Could not fetch challenge details.");
-      } else {
-        setChallenge(data);
+      if (challengeError) throw challengeError;
+      
+      const { data: participantsData, error: participantsError } = await supabase
+        .from("challenge")
+        .select('participantsID')
+        .eq('id', id)
+        .single();
+
+      if (participantsError) throw participantsError;
+
+      const participants = participantsData.participantsID || [];
+      
+      setChallenge(challengeData);
+      setParticipantCount(participants.length);
+      setHasJoined(participants.includes(user.id));
+
+    } catch (error) {
+      console.error("Error fetching challenge:", error);
+      Alert.alert("Error", "Failed to load challenge information");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleJoinToggle = async () => {
+    try {
+      setProcessing(true);
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        Alert.alert("Error", "Please login to continue");
+        return;
       }
-    };
 
-    fetchChallenge();
-  }, [id]);
+      // Get current participants array
+      const { data: challengeData, error: challengeError } = await supabase
+        .from("challenge")
+        .select("participantsID")
+        .eq("id", id)
+        .single();
 
-  if (!challenge) {
+      if (challengeError) throw challengeError;
+
+      let currentParticipants = challengeData.participantsID || [];
+      let newParticipants;
+      
+      if (hasJoined) {
+        // Remove user from participants
+        newParticipants = currentParticipants.filter(pid => pid !== user.id);
+      } else {
+        // Add user to participants
+        newParticipants = [...currentParticipants, user.id];
+      }
+
+      // Update participants array
+      const { error: updateError } = await supabase
+        .from("challenge")
+        .update({
+          participantsID: newParticipants
+        })
+        .eq("id", id);
+
+      if (updateError) throw updateError;
+
+      setHasJoined(!hasJoined);
+      setParticipantCount(newParticipants.length);
+      
+      Alert.alert(
+        "Success", 
+        hasJoined 
+          ? "You have left the challenge" 
+          : "You have successfully joined the challenge!"
+      );
+
+    } catch (error) {
+      console.error("Error toggling challenge participation:", error);
+      Alert.alert("Error", "Failed to process your request");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Loading challenge details...</Text>
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#0066b2" />
       </View>
     );
   }
 
   return (
-    <LinearGradient colors={['#0066b2', '#ff9900']} style={styles.gradient}>
-  <ScrollView contentContainerStyle={styles.container}>
-    
-  {/* Go Back Button */}
-  <TouchableOpacity
-        style={styles.goBackButton}
-        onPress={() => navigation.goBack()}
+    <LinearGradient 
+      colors={['#0066b2', '#ADD8E6', '#F0FFFF',]} 
+      style={styles.gradient}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
         >
-        <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="chevron-back-circle" size={32} color="#FFAC1C" />
         </TouchableOpacity>
 
-    {/* Image Display Container */}
-    {challenge.image && (
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: challenge.image }} style={styles.image} />
-      </View>
-    )}
+        <Animatable.View 
+          animation="fadeInUp" 
+          duration={1000} 
+          style={styles.card}
+        >
+          {challenge?.image && (
+            <Image 
+              source={{ uri: challenge.image }} 
+              style={styles.image}
+              resizeMode="cover"
+            />
+          )}
 
-    {/* Challenge Details Card */}
-    <View style={styles.detailsCard}>
-      <Text style={styles.title}>{challenge.title || "No Title"}</Text>
-      <Text style={styles.description}>
-        {challenge.description || "No Description Available"}
-      </Text>
+          <View style={styles.contentContainer}>
+            <Animatable.Text 
+              animation="fadeInDown" 
+              style={styles.title}
+            >
+              {challenge?.title || "Challenge Title"}
+            </Animatable.Text>
+            
+            <TouchableOpacity 
+  style={styles.participantsContainer}
+  onPress={() => navigation.navigate("ViewParticipants", { 
+    challengeId: id,
+    participantIds: challenge?.participantsID || []
+  })}
+>
+  <MaterialCommunityIcons 
+    name="run-fast" 
+    size={24} 
+    color="#0066b2" 
+  />
+  <Text style={styles.participantsText}>
+    {participantCount} Runner{participantCount !== 1 ? 's' : ''} Joined
+  </Text>
+</TouchableOpacity>
+            
+            <View style={styles.divider} />
+            
+            <Text style={styles.description}>
+              {challenge?.description || "No description available"}
+            </Text>
 
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Location:</Text>
-        <Text style={styles.infoText}>
-          {challenge.location || "Not specified"}
-        </Text>
-      </View>
+            <View style={styles.infoSection}>
+              {[
+                {
+                  icon: "location",
+                  value: challenge?.location,
+                  default: "Location not specified"
+                },
+                {
+                  icon: "calendar",
+                  value: challenge?.date,
+                  default: "Date not specified"
+                },
+                {
+                  icon: "time",
+                  value: challenge?.time,
+                  default: "Time not specified"
+                },
+                {
+                  icon: "signal",
+                  value: challenge?.level,
+                  default: "Level not specified",
+                  customIcon: true
+                }
+              ].map((item, index) => (
+                <Animatable.View 
+                  key={index}
+                  animation="fadeInRight"
+                  delay={index * 200}
+                  style={styles.infoItem}
+                >
+                  {item.customIcon ? (
+                    <MaterialCommunityIcons 
+                      name={item.icon} 
+                      size={24} 
+                      color="#0066b2" 
+                    />
+                  ) : (
+                    <Ionicons 
+                      name={item.icon} 
+                      size={24} 
+                      color="#0066b2" 
+                    />
+                  )}
+                  <Text style={styles.infoText}>
+                    {item.value || item.default}
+                  </Text>
+                </Animatable.View>
+              ))}
+            </View>
 
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Date:</Text>
-        <Text style={styles.infoText}>
-          {challenge.date || "No Date Provided"}
-        </Text>
-      </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  hasJoined ? styles.unjoinButton : styles.joinButton,
+                  processing && styles.processingButton
+                ]}
+                onPress={handleJoinToggle}
+                disabled={processing}
+              >
+                <MaterialCommunityIcons 
+                  name={hasJoined ? "account-remove" : "account-plus"} 
+                  size={24} 
+                  color="#fff" 
+                />
+                <Text style={styles.buttonText}>
+                  {processing 
+                    ? "Processing..." 
+                    : hasJoined 
+                      ? "Leave Challenge" 
+                      : "Join Challenge"
+                  }
+                </Text>
+              </TouchableOpacity>
 
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Time:</Text>
-        <Text style={styles.infoText}>
-          {challenge.time || "No Time Provided"}
-        </Text>
-      </View>
-
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Level:</Text>
-        <Text style={styles.infoText}>
-          {challenge.level || "Not specified"}
-        </Text>
-      </View>
-
-        {/* Start Challenge Button */}
-    <TouchableOpacity
-      style={styles.startButton}
-      onPress={() => navigation.navigate("Run")}
-    >
-      <MaterialCommunityIcons name="run-fast" size={24} color="#fff" />
-      <Text style={styles.startButtonText}>Start Challenge</Text>
-    </TouchableOpacity>
-    </View>
-  </ScrollView>
-</LinearGradient>
+              <TouchableOpacity
+                style={[styles.button, styles.startButton]}
+                onPress={() => navigation.navigate("RunTracker")}
+                disabled={!hasJoined}
+              >
+                <MaterialCommunityIcons 
+                  name="run-fast" 
+                  size={24} 
+                  color="#fff" 
+                />
+                <Text style={styles.buttonText}>
+                  Start Challenge
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Animatable.View>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
@@ -119,111 +296,142 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
-  container: {
-    padding: 10,
-    paddingTop: 50, // Make room for the header
-  },
-  goBackButton: {
-    position: "absolute",
-    top: 53,
-    left: 12,
-    backgroundColor: "#36454F",
-    padding: 10,
-    borderRadius: 50,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    zIndex: 10, // Ensure it stays above other content
-  },
-  startButton: {
-    flexDirection: "row",
-    alignItems: "center",
+  centered: {
+    flex: 1,
     justifyContent: "center",
-    backgroundColor: "#28a745",
-    paddingVertical: 10, // Reduced vertical padding for a smaller button
-    paddingHorizontal: 20, // Adjusted horizontal padding for a more compact button
-    borderRadius: 30, // Slightly more rounded corners for a modern feel
-    shadowColor: "#000",
-    shadowOpacity: 0.1, // Reduced shadow opacity for a more subtle effect
-    shadowOffset: { width: 0, height: 2 }, // Reduced shadow offset for a softer shadow
-    shadowRadius: 5, // Reduced shadow radius
-    marginBottom: 20,
-    marginTop: 10,
-    elevation: 3, // Reduced Android shadow
-    width: '80%', // Reduced width, so it's not too wide
-    alignSelf: 'center', // Center the button horizontally
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
-  startButtonText: {
-    marginLeft: 12,
-    color: "#fff",
-    fontSize: 17,
-    fontWeight: "bold",
+  container: {
+    flexGrow: 1,
+    padding: 12,
+    paddingTop: 60,
   },
-  imageContainer: {
-    marginBottom: 20,
-    borderRadius: 20,
+  backButton: {
+    position: "absolute",
+    top: 16,
+    left: 16,
+    zIndex: 10,
+    padding: 8,
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 24,
     overflow: "hidden",
     shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
     shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 8,
+    shadowRadius: 5,
+    elevation: 8,
   },
   image: {
     width: "100%",
     height: 230,
-    borderRadius: 20,
   },
-  detailsCard: {
-    backgroundColor: "#fff",
-    padding: 10,
-    borderRadius: 25,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
-    elevation: 6,
-    marginBottom: 40,
-    
-    width: '100%',
+  contentContainer: {
+    padding: 24,
   },
   title: {
     fontSize: 22,
-    fontWeight: "bold",
-    color: "#343a40",
-    marginBottom: 10,
+    fontWeight: "800",
+    color: "#1a237e",
     textAlign: "center",
+    marginBottom: 8,
+    bottom: 15,
+  },
+  divider: {
+    height: 2,
+    backgroundColor: "#e0e0e0",
+    marginVertical: 15,
+    width: "100%",
+    borderRadius: 1,
   },
   description: {
-    fontSize: 18,
-    color: "#495057",
-    
-    marginBottom: 20,
-    // lineHeight: 1.7,
+    fontSize: 16,
+    color: "#424242",
+    lineHeight: 24,
+    marginBottom: 24,
     textAlign: "center",
   },
-  infoRow: {
-    flexDirection: "row",
-    marginBottom: 15,
+  infoSection: {
+    marginBottom: 20,
   },
-  infoLabel: {
-    fontWeight: "bold",
-    color: "#343a40",
-    marginRight: 12,
-    fontSize: 18,
+  infoItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+    backgroundColor: "#f5f5f5",
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   infoText: {
-    color: "#495057",
-    fontSize: 18,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
+    marginLeft: 12,
     fontSize: 16,
-    color: "#6c757d",
+    color: "#424242",
+    flex: 1,
+    fontWeight: "500",
+  },
+  participantsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+    backgroundColor: "#f5f5f5",
+    padding: 12,
+    borderRadius: 20,
+  },
+  participantsText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#0066b2',
+    fontWeight: '700',
+  },
+  buttonContainer: {
+    gap: 14,
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  joinButton: {
+    backgroundColor: "#2e7d32",
+  },
+  unjoinButton: {
+    backgroundColor: "#c62828",
+  },
+  startButton: {
+    backgroundColor: "#0066b2",
+  },
+  processingButton: {
+    backgroundColor: "#9e9e9e",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    marginLeft: 12,
   },
 });
 

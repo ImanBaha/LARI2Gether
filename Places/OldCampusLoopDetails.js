@@ -2,11 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import DetailsCard from "../components/DetailsCard"; // Import your updated DetailsCard component
 import { Ionicons } from "@expo/vector-icons"; // Import an icon library for the location icon
+import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
+
 
 const { width } = Dimensions.get('window');
 
 const OldCampusLoopDetails = ({ route }) => {
   const { name } = route.params;
+  const navigation = useNavigation(); // Get the navigation object
 
   const [dateTime, setDateTime] = useState(new Date());
   const scrollViewRef = useRef(null);
@@ -56,6 +59,10 @@ const OldCampusLoopDetails = ({ route }) => {
   return (
     <View style={styles.container}>
       <ScrollView>
+        {/* Back Button */}
+                        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                          <Ionicons name="arrow-back" size={24} color="white" />
+                        </TouchableOpacity>
         {/* Location and Title Section */}
         <View style={styles.titleContainer}>
           <TouchableOpacity style={styles.locationIcon} onPress={() => openMap(3.685421,101.527183)}>
@@ -74,24 +81,24 @@ const OldCampusLoopDetails = ({ route }) => {
             ref={scrollViewRef}
             pagingEnabled
           >
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/old%20campus/oc11.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJvbGQgY2FtcHVzL29jMTEuanBnIiwiaWF0IjoxNzM1NTc3OTE1LCJleHAiOjE3NjcxMTM5MTV9.FDHZrZ2pzR7rw4tiNxnCbOtb1ZVHr1syNMrWTYwFVGI&t=2024-12-30T16%3A58%3A34.698Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/old%20campus/oc7.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJvbGQgY2FtcHVzL29jNy5qcGciLCJpYXQiOjE3MzU1Nzc5NDAsImV4cCI6MTc2NzExMzk0MH0.TfBjvJxP60LLRAdbhtOKOE8DLonB8IYXKhaSvskhgCg&t=2024-12-30T16%3A58%3A59.762Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/old%20campus/oc8.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJvbGQgY2FtcHVzL29jOC5qcGciLCJpYXQiOjE3MzU1Nzc5NTgsImV4cCI6MTc2NzExMzk1OH0.wj4LRHoJOADMbfM5B3zf10vhKmIKx0rx34fFAEaoJUI&t=2024-12-30T16%3A59%3A18.280Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/old%20campus/oc5.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJvbGQgY2FtcHVzL29jNS5qcGciLCJpYXQiOjE3MzU1Nzc5ODAsImV4cCI6MTc2NzExMzk4MH0.rKkg7kZsKax_1q80d8STOTrikdXpEja_nTQXNPaxVEM&t=2024-12-30T16%3A59%3A39.510Z" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/old%20campus/oc1.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJvbGQgY2FtcHVzL29jMS5qcGciLCJpYXQiOjE3MzU1NzgwMDUsImV4cCI6MTc2NzExNDAwNX0.YAOqLK4HoLi4Bl9PVgixL8gdLia6NcRPeVjuYs9HRUo&t=2024-12-30T17%3A00%3A04.756Z" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/old%20campus/oc11.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/old%20campus/oc8.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/old%20campus/oc7.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/old%20campus/oc5.jpg" }} />
+            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/old%20campus/oc1.jpg" }} />
           </ScrollView>
         </View>
 
         {/* Details Card Below Image Slider */}
         <DetailsCard
           title={name}
-          image={require("../assests/images/avatar.jpg")} // Replace with your image
           description={description}
           additionalDescription="Ideal for LARI2Gether users, this loop offers a short, enjoyable run while exploring the unique architecture and rich history of UPSI. It’s a great spot for personal training or community runs in a nostalgic setting."
           location="Kampus Sultan Abdul Jalil Shah UPSI, Tanjong Malim"
-          route="Main Arena, VIP Lounge, Courts"
-          distance="Total Area: 10,000 sq meters"
-          elevation="Multiple Elevated Seats for a panoramic view"
+          totalDistance="1.2km per lap (Standard Track)"
+          difficulty={3}
+          safety={4}
+          favLocation={4}
         />
       </ScrollView>
     </View>
@@ -111,6 +118,19 @@ const styles = StyleSheet.create({
     right: 20,
     left: 20,
     zIndex: 10,
+  },
+  backButton: {
+    position: "absolute",
+    top: 20,
+    left: 10,
+    zIndex: 20,
+    backgroundColor: "#0096FF",
+    padding: 10,
+    borderRadius: 50,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   locationIcon: {
     backgroundColor: "#0096FF",

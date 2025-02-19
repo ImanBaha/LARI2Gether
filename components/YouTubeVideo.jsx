@@ -19,10 +19,10 @@ const YouTubeVideo = ({ videoId }) => {
 const styles = StyleSheet.create({
   container: {
     height: 200, // Adjust the height as needed
-    marginVertical: 10,
+    marginVertical: 5,
     borderRadius: 12,
     overflow: 'hidden',
-    marginBottom: 113,
+    marginBottom: 10,
   },
   video: {
     flex: 1,

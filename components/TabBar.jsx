@@ -86,21 +86,23 @@ const TabBar = ({ state, descriptors, navigation }) => {
 
 const styles = StyleSheet.create({
     tabbar: {
-        position: 'absolute', 
-        bottom: 25,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: '#FAF9F6',
-        marginHorizontal: 20,
-        paddingVertical: 15,
-        borderRadius: 25,
-        borderCurve: 'continuous',
-        shadowColor: 'black',
-        shadowOffset: {width: 0, height: 10},
-        shadowRadius: 10,
-        shadowOpacity: 0.1
-    }
+    position: 'absolute',
+    bottom: 25,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF1',
+    marginHorizontal: 15,
+    paddingVertical: 15,
+    borderRadius: 25,
+    borderCurve: 'continuous',
+    borderWidth: 1, // Thin outline
+    borderColor: 'rgba(0, 0, 0, 0.1)', // Subtle color for the outline
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 10,
+    shadowOpacity: 0.1,
+}
 })
 
 export default TabBar

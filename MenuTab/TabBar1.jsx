@@ -6,30 +6,22 @@ import TabBar from '../components/TabBar'; // Import your custom TabBar
 import Run from './Run';
 import Activity from './Activity';
 import Challenge from './Challenge';
+import RunTracker from './Run';
 
 const Tab = createBottomTabNavigator();
 
 export default function TabBar1() {
     return (
         <Tab.Navigator
-            initialRouteName="Home"
+            initialRouteName="Challenge"
             screenOptions={{
                 tabBarActiveTintColor: '#42f44b',
-                tabBarInactiveTintColor: 'gray',
+                tabBarInactiveTintColor: 'black',
                 headerShown: false, // Hide the header for all screens
             }}
+            
             tabBar={props => <TabBar {...props} />} // Use your custom TabBar here
         >
-            <Tab.Screen 
-                name="Home" 
-                component={Home} 
-                options={{ tabBarLabel: 'Home' }}  
-            />
-            <Tab.Screen 
-                name="Run" 
-                component={Run} 
-                options={{ tabBarLabel: 'Run' }}  
-            />
              <Tab.Screen 
                 name="Challenge" 
                 component={Challenge} 
@@ -40,6 +32,12 @@ export default function TabBar1() {
                 component={Activity} 
                 options={{ tabBarLabel: 'Activity' }}  
             />
+            <Tab.Screen 
+                name="Home" 
+                component={Home} 
+                options={{ tabBarLabel: 'Info' }}  
+            />
+           
             <Tab.Screen 
                 name="Profile" 
                 component={Profile} 

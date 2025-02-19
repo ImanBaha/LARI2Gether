@@ -1,89 +1,135 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Text, View, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
+import { Text, View, ScrollView, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
-import DailyMotivation from '../components/DailyMotivation'; // Import the DailyMotivation component
+import { LinearGradient } from 'expo-linear-gradient';
+import YouTubeVideo from '../components/YouTubeVideo';
 import CampusMapRoutes from '../components/CampusMapRoutes';
-import YouTubeVideo from '../components/YouTubeVideo'; // Import the YouTubeVideo component
-import NavCard from '../components/NavCard';
+
 
 const { width } = Dimensions.get('window');
+const CARD_WIDTH = width - 20; // Reduced side margins
+
+const places = [
+  {
+    id: 1,
+    name: 'Arena UPSI',
+    image: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/random%20image/arena.jpg",
+    latitude: 4.3601,
+    longitude: 101.1449
+  },
+  {
+    id: 2,
+    name: 'Old Campus',
+    image: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/random%20image/kk.jpg",
+    latitude: 4.3602,
+    longitude: 101.1450
+  },
+  {
+    id: 3,
+    name: 'Zaba College',
+    image: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/111.jpg",
+    latitude: 4.3603,
+    longitude: 101.1451
+  },
+  {
+    id: 4,
+    name: 'New Campus',
+    image: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/random%20image/2.jpg",
+    latitude: 4.3604,
+    longitude: 101.1452
+  }
+];
 
 const Home = () => {
   const navigation = useNavigation();
   const scrollViewRef = useRef(null);
-  const [dateTime, setDateTime] = useState(new Date());
-  let scrollValue = 0;
-  let scrolled = 0;
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      scrolled++;
-      if (scrolled < 5) {
-        scrollValue += width;
-      } else {
-        scrollValue = 0;
-        scrolled = 0;
-      }
-      scrollViewRef.current?.scrollTo({ x: scrollValue, animated: true });
-    }, 2500); // Slide every 2.5 seconds for a smoother experience
+      const nextIndex = (currentIndex + 1) % places.length;
+      setCurrentIndex(nextIndex);
+      scrollViewRef.current?.scrollTo({
+        x: nextIndex * CARD_WIDTH,
+        animated: true
+      });
+    }, 2500);
 
-    // Update date and time every second
-    const dateTimeInterval = setInterval(() => {
-      setDateTime(new Date());
-    }, 1000);
+    return () => clearInterval(interval);
+  }, [currentIndex]);
 
-    return () => {
-      clearInterval(interval);
-      clearInterval(dateTimeInterval);
-    };
-  }, []);
+  const onPlacePress = (place) => {
+    switch (place.name) {
+      case 'Arena UPSI':
+        navigation.navigate('ArenaDetails', {
+          name: place.name,
+          latitude: place.latitude,
+          longitude: place.longitude,
+        });
+        break;
+      case 'Old Campus':
+        navigation.navigate('OldCampusLoopDetails', {
+          name: place.name,
+          latitude: place.latitude,
+          longitude: place.longitude,
+        });
+        break;
+      case 'Zaba College':
+        navigation.navigate('KZCollegeDetails', {
+          name: place.name,
+          latitude: place.latitude,
+          longitude: place.longitude,
+        });
+        break;
+      case 'New Campus':
+        navigation.navigate('NewCampusLoopDetails', {
+          name: place.name,
+          latitude: place.latitude,
+          longitude: place.longitude,
+        });
+        break;
+      default:
+        console.warn('No screen found for this place');
+    }
+  };
 
   return (
-    <LinearGradient colors={['#0066b2', '#FFAA33']} style={styles.gradientContainer}>
-    <ScrollView style={styles.scrollView}>
-      <View style={styles.headerMain}>
-        <View style={styles.headerRowMain}>
-          <Image style={styles.profileImageMain} source={require("../assests/images/L2G.png")} />
-          {/* Wrap 'LARI2Gether' inside a Text component */}
-          <Text style={styles.headerTextMain}>LARI2Gether</Text>
+    <LinearGradient colors={['#0066b2', '#ADD8E6', '#F0FFFF']} style={styles.gradientContainer}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.mainImageContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            ref={scrollViewRef}
+            pagingEnabled
+            snapToInterval={CARD_WIDTH}
+            decelerationRate="fast"
+          >
+            {places.map((place) => (
+              <TouchableOpacity
+                key={place.id}
+                style={styles.placeContainer}
+                onPress={() => onPlacePress(place)}
+                activeOpacity={0.9}
+              >
+                <Image style={styles.mainImage} source={{ uri: place.image }} />
+                <View style={styles.placeNameContainer}>
+                  <Text style={styles.placeName}>{place.name}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
-      </View>
-  
-      {/* Other components */}
-      <DailyMotivation />
-  
-      <View style={styles.mainImageContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          ref={scrollViewRef}
-          pagingEnabled
-        >
-          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/1.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvMS5qcGciLCJpYXQiOjE3MzU1NzczNjQsImV4cCI6MTc2NzExMzM2NH0.LTKkk7meSrCDcYz-QOU5YNIfDTkYfiIsZ4J7WjyuI9o&t=2024-12-30T16%3A49%3A24.010Z" }} />
-          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/2.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvMi5qcGciLCJpYXQiOjE3MzU1Nzc0MDAsImV4cCI6MTc2NzExMzQwMH0._7D6_YmjIVkGqsvIjxkWsZ1yQ2lJNvKHgIEzb85gOIo&t=2024-12-30T16%3A49%3A59.497Z" }} />
-          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/3.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvMy5qcGciLCJpYXQiOjE3MzU1Nzc0MTgsImV4cCI6MTc2NzExMzQxOH0.wse2NAcKfyfQt4H8GU0Rnr711dkNGIOTHmiunqN7zso&t=2024-12-30T16%3A50%3A18.099Z" }} />
-          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/4.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvNC5qcGciLCJpYXQiOjE3MzU1Nzc0MzMsImV4cCI6MTc2NzExMzQzM30.-DGRMSgTb7lL0ghQNoDEUT3A2cZE-_wRUvzlXhCIEcs&t=2024-12-30T16%3A50%3A32.693Z" }} />
-          <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/random%20image/5.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJyYW5kb20gaW1hZ2UvNS5qcGciLCJpYXQiOjE3MzU1Nzc0NTYsImV4cCI6MTc2NzExMzQ1Nn0.7KdfP28rpirnvODCQ8ZpzBkm_awziskm2_n_akQouW0&t=2024-12-30T16%3A50%3A56.057Z" }} />
-        </ScrollView>
-      </View>
-  
 
-      <NavCard/>
-  
+        <Text style={styles.sectionTitle}>Campus Tour</Text>
+        <YouTubeVideo videoId="ZbChJzaDbqg" />
+
       {/* Campus Map with Popular Routes */}
       <CampusMapRoutes />
-  
-      {/* YouTube Video Section */}
-      {/* Wrap 'Featured Video' inside a Text component */}
-      <Text style={styles.sectionTitle}>Campus Tour</Text>
-      <YouTubeVideo videoId="ZbChJzaDbqg" />
-    </ScrollView>
-  </LinearGradient>
+      </ScrollView>
+    </LinearGradient>
   );
 };
-
-export default Home;
 
 const styles = StyleSheet.create({
   gradientContainer: {
@@ -91,47 +137,52 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     paddingHorizontal: 10,
-  },
-  headerMain: {
-    width: '100%',
-    height: 64,
-    borderRadius: 12,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    marginBottom: 2,
     marginTop: 25,
   },
-  headerRowMain: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  profileImageMain: {
-    width: 70,
-    height: 57,
-    borderRadius: 10,
-    marginTop: 12,
-  },
-  headerTextMain: {
-    marginLeft: 12,
-    fontSize: 21,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
   mainImageContainer: {
-    marginBottom: 20,
-    borderRadius: 12,
-    overflow: 'hidden',
+    marginBottom: 10,
+  },
+  placeContainer: {
+    position: 'relative',
+    width: CARD_WIDTH,
+    borderRadius: 15,
+    elevation: 8,
     shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 5,
-    alignItems: 'center', // Center the image horizontally
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    backgroundColor: '#fff',
   },
   mainImage: {
-    width: width - 25,
+    width: CARD_WIDTH,
     height: 200,
-    borderRadius: 12,
-    marginHorizontal: 10,
+    borderRadius: 15,
+  },
+  placeNameContainer: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    padding: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    maxWidth: '90%', // Ensure the container doesn't get too wide
+  },
+  placeName: {
+    color: '#000',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   sectionTitle: {
     fontSize: 20,
@@ -140,3 +191,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
 });
+
+export default Home;

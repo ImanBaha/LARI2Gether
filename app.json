@@ -1,4 +1,51 @@
 {
-  "name": "LARI2Gether",
-  "slug": "LARI2Gether"
+  "expo": {
+    "name": "LARI2Gether",
+    "slug": "lari2gether",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assests/images/L2G.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assests/images/L2G.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFC529"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assests/images/LogoL2G.png",
+        "backgroundColor": "#FFC529"
+      },
+
+      "package": "com.iman_baha.lari2gether",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDZiI_KGG93fPna_2hLcNZkSt4AcRw4Ohg"
+        }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assests/images/L2G.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b3ea0c89-7cf5-4f93-af6a-80a23db9f1b2"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
 }

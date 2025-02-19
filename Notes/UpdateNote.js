@@ -3,10 +3,9 @@ import {
   View,
   Text,
   TextInput,
-  Button,
+  TouchableOpacity,
   StyleSheet,
   Alert,
-  TouchableOpacity,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { supabase } from "../lib/supabase";
@@ -58,7 +57,7 @@ const UpdateNote = () => {
     // Update the note
     const { data, error } = await supabase
       .from("notes")
-      .update({ title, description, rating })
+      .update({ title, description, rating: parseInt(rating, 10) })
       .eq("id", id);
 
     if (error) {
@@ -67,8 +66,9 @@ const UpdateNote = () => {
       Alert.alert("Error", "Failed to update note.");
     } else {
       setFormError(null);
-      Alert.alert("Success", "Note updated successfully!");
-      navigation.goBack(); // Navigate back after successful update
+      Alert.alert("Success", "Note updated successfully!", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
     }
   };
 
@@ -77,13 +77,13 @@ const UpdateNote = () => {
   };
 
   return (
-    <LinearGradient colors={["#0066b2", "#ff9900"]} style={styles.container}>
+    <LinearGradient colors={['#0066b2', '#ADD8E6', '#F0FFFF']} style={styles.container}>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="#fff" />
+        <Ionicons name="arrow-back" size={28} color="#FFAC1C" />
       </TouchableOpacity>
 
-      <Text style={styles.header}>Update Note</Text>
+      <Text style={styles.header}>Update Running Journal</Text>
 
       <View style={styles.card}>
         <View style={styles.inputGroup}>
@@ -91,6 +91,7 @@ const UpdateNote = () => {
           <TextInput
             style={styles.input}
             placeholder="Enter title"
+            placeholderTextColor="#888"
             value={title}
             onChangeText={setTitle}
           />
@@ -101,6 +102,7 @@ const UpdateNote = () => {
           <TextInput
             style={[styles.input, styles.textArea]}
             placeholder="Enter description"
+            placeholderTextColor="#888"
             value={description}
             onChangeText={setDescription}
             multiline
@@ -111,7 +113,8 @@ const UpdateNote = () => {
           <Text style={styles.inputHeader}>Rating</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter rating (1-5)"
+            placeholder="Enter rating (1-10)"
+            placeholderTextColor="#888"
             value={rating}
             onChangeText={setRating}
             keyboardType="numeric"
@@ -119,8 +122,23 @@ const UpdateNote = () => {
         </View>
 
         <View style={styles.buttonGroup}>
-          <Button title="Update Note" onPress={handleSubmit} color="#0066b2" />
-          <Button title="Cancel" onPress={handleCancel} color="#e74c3c" />
+          <TouchableOpacity onPress={handleSubmit} style={styles.updateButton}>
+            <LinearGradient
+              colors={["#4caf50", "#388e3c"]}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonText}>Update</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
+            <LinearGradient
+              colors={["#e53935", "#b71c1c"]}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonText}>Cancel</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
 
         {formError && <Text style={styles.error}>{formError}</Text>}
@@ -136,48 +154,49 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 40,
+    top: 50,
     left: 15,
     zIndex: 1,
   },
   header: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
-    color: "#fff",
-    marginTop: 23,
+    color: "black",
+    marginTop: 30,
   },
   card: {
-    backgroundColor: "#f5f5f5",
-    borderRadius: 10,
+    backgroundColor: "#fff",
+    borderRadius: 12,
     padding: 20,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 5,
   },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 15,
   },
   inputHeader: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#444",
+    marginBottom: 8,
   },
   input: {
     height: 50,
-    borderColor: "#ccc",
+    borderColor: "#ddd",
     borderWidth: 1,
-    paddingHorizontal: 15,
-    borderRadius: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
     fontSize: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9f9f9",
     color: "#333",
   },
   textArea: {
-    height: 100,
+    height: 250,
     textAlignVertical: "top",
   },
   buttonGroup: {
@@ -185,11 +204,30 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 20,
   },
+  updateButton: {
+    flex: 1,
+    marginRight: 10,
+  },
+  cancelButton: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  buttonGradient: {
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   error: {
     color: "#e74c3c",
     textAlign: "center",
     marginTop: 15,
-    fontSize: 16,
+    fontSize: 14,
+    fontStyle: "italic",
   },
 });
 

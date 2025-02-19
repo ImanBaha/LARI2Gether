@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { supabase } from "../lib/supabase"; // Your Supabase client instance
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons"; // For the back icon
@@ -28,11 +28,9 @@ const AddNote = ({ navigation }) => {
       } else {
         console.log("Insert successful:", data);
         setFormError(null);
-        Alert.alert(
-          "Success",
-          "Note created successfully!",
-          [{ text: "OK", onPress: () => navigation.goBack() }]
-        );
+        Alert.alert("Success", "Note created successfully!", [
+          { text: "OK", onPress: () => navigation.goBack() },
+        ]);
       }
     } catch (error) {
       console.error("Unexpected error:", error);
@@ -46,13 +44,13 @@ const AddNote = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={["#0066b2", "#ff9900"]} style={styles.container}>
+    <LinearGradient colors={['#0066b2', '#ADD8E6', '#F0FFFF']} style={styles.container}>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="#fff" />
+        <Ionicons name="arrow-back" size={28} color="#FFAC1C" />
       </TouchableOpacity>
 
-      <Text style={styles.header}>Create New Note</Text>
+      <Text style={styles.header}>Create Running Journal</Text>
 
       <View style={styles.card}>
         <View style={styles.inputGroup}>
@@ -60,7 +58,7 @@ const AddNote = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Enter title"
-            placeholderTextColor="#666"
+            placeholderTextColor="#888"
             value={title}
             onChangeText={setTitle}
           />
@@ -71,7 +69,7 @@ const AddNote = ({ navigation }) => {
           <TextInput
             style={[styles.input, styles.textArea]}
             placeholder="Enter description"
-            placeholderTextColor="#666"
+            placeholderTextColor="#888"
             value={description}
             onChangeText={setDescription}
             multiline
@@ -83,7 +81,7 @@ const AddNote = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Enter rating (1-10)"
-            placeholderTextColor="#666"
+            placeholderTextColor="#888"
             value={rating}
             onChangeText={setRating}
             keyboardType="numeric"
@@ -91,8 +89,23 @@ const AddNote = ({ navigation }) => {
         </View>
 
         <View style={styles.buttonGroup}>
-          <Button title="Create Note" onPress={handleSubmit} color="#0066b2" />
-          <Button title="Cancel" onPress={handleCancel} color="#e74c3c" />
+          <TouchableOpacity onPress={handleSubmit} style={styles.createButton}>
+            <LinearGradient
+              colors={["#4caf50", "#388e3c"]}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonText}>Create</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
+            <LinearGradient
+              colors={["#e53935", "#b71c1c"]}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonText}>Cancel</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
 
         {formError && <Text style={styles.error}>{formError}</Text>}
@@ -104,52 +117,53 @@ const AddNote = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 15,
   },
   backButton: {
     position: "absolute",
-    top: 40,
+    top: 50,
     left: 15,
     zIndex: 1,
   },
   header: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 12,
+    marginBottom: 20,
     textAlign: "center",
-    color: "#fff",
-    marginTop: 23,
+    color: "black",
+    marginTop: 30,
   },
   card: {
-    backgroundColor: "#f5f5f5",
-    borderRadius: 10,
-    padding: 18,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 5,
   },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 15,
   },
   inputHeader: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
     color: "#444",
-    marginBottom: 5,
+    marginBottom: 8,
   },
   input: {
     height: 50,
-    borderColor: "#ccc",
+    borderColor: "#ddd",
     borderWidth: 1,
-    paddingHorizontal: 15,
-    borderRadius: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
     fontSize: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9f9f9",
     color: "#333",
   },
   textArea: {
-    height: 100,
+    height: 250,
     textAlignVertical: "top",
   },
   buttonGroup: {
@@ -157,11 +171,29 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 20,
   },
+  createButton: {
+    flex: 1,
+    marginRight: 10,
+  },
+  cancelButton: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  buttonGradient: {
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   error: {
     color: "#e74c3c",
     textAlign: "center",
     marginTop: 15,
-    fontSize: 16,
+    fontSize: 14,
     fontStyle: "italic",
   },
 });

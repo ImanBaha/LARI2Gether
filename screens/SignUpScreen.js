@@ -5,8 +5,8 @@ import { TouchableOpacity } from 'react-native';
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
-import { supabase } from '../lib/supabase'; // Import Supabase
+import { LinearGradient } from 'expo-linear-gradient';
+import { supabase } from '../lib/supabase';
 import { Platform } from 'react-native';
 
 export default function SignUpScreen() {
@@ -30,7 +30,6 @@ export default function SignUpScreen() {
                 return;
             }
     
-            // Insert user data into the 'profiles' table
             const userId = data.user?.id;
             if (userId) {
                 const { error: insertError } = await supabase
@@ -48,12 +47,11 @@ export default function SignUpScreen() {
             }
     
             alert('Sign-up successful! Please check your email for verification.');
-            navigation.navigate('Login'); // Navigate to the login screen
+            navigation.navigate('Login');
         } catch (error) {
             alert('Error signing up: ' + error.message);
         }
     };
-    
 
     return (
         <LinearGradient
@@ -75,7 +73,7 @@ export default function SignUpScreen() {
                     source={require('../assests/Run4.json')}
                     autoPlay
                     loop
-                    className="mt-5 h-[210] w-[100]"
+                    className="mt-[5] h-[220] w-[100]"
                 />
                 <Animated.Image
                     entering={FadeInUp.delay(400).duration(1000).springify().damping(4)}
@@ -84,72 +82,68 @@ export default function SignUpScreen() {
                 />
             </View>
 
+            {/* Title and Form */}
             <View className="h-full w-full flex justify-around pt-40 pb-10">
                 {/* Title */}
                 <View className="flex items-center">
                     <Animated.Image
                         entering={FadeInUp.duration(1000).springify()}
-                        className="h-[120] w-[150] mt-[53]"
+                        className="h-[120] w-[150] mt-10"
                         source={require('../assests/images/L2G.png')}
                     />
                 </View>
 
-                {/* Form */}
-                <View className="flex items-center mx-4 space-y-4 ">
-                            <Animated.View
-                    entering={FadeInDown.duration(1000).springify()}
-                    className="bg-black/5 rounded-2xl w-full"
-                    style={{
-                        padding: Platform.OS === 'android' ? 10 : 17,
-                    }}
-                >
-                    <TextInput
-                        placeholder="Username"
-                        placeholderTextColor={'gray'}
-                        value={username}
-                        onChangeText={setUsername}
-                        style={{
-                            fontSize: Platform.OS === 'android' ? 14 : 18,
-                        }}
-                    />
-                </Animated.View>
+                <View className="flex items-center mx-4 space-y-4 mb-7">
+                    <Animated.View
+                        entering={FadeInDown.duration(1000).springify()}
+                        className="bg-black/5 p-4 rounded-2xl w-full"
+                    >
+                        <TextInput
+                            placeholder="Username"
+                            placeholderTextColor={'gray'}
+                            value={username}
+                            onChangeText={setUsername}
+                            style={{
+                                fontSize: 14,
+                                paddingVertical: Platform.OS === 'android' ? 8 : 12,
+                            }}
+                        />
+                    </Animated.View>
 
-                <Animated.View
-                    entering={FadeInDown.delay(200).duration(1000).springify()}
-                    className="bg-black/5 rounded-2xl w-full"
-                    style={{
-                        padding: Platform.OS === 'android' ? 10 : 18,
-                    }}
-                >
-                    <TextInput
-                        placeholder="Email"
-                        placeholderTextColor={'gray'}
-                        value={email}
-                        onChangeText={setEmail}
-                        style={{
-                            fontSize: Platform.OS === 'android' ? 14 : 18,
-                        }}
-                    />
-                </Animated.View>
+                    <Animated.View
+                        entering={FadeInDown.delay(200).duration(1000).springify()}
+                        className="bg-black/5 p-4 rounded-2xl w-full"
+                    >
+                        <TextInput
+                            placeholder="Email"
+                            placeholderTextColor={'gray'}
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            style={{
+                                fontSize: 14,
+                                paddingVertical: Platform.OS === 'android' ? 8 : 12,
+                            }}
+                        />
+                    </Animated.View>
 
-                <Animated.View
-                    entering={FadeInDown.delay(400).duration(1000).springify()}
-                    className="bg-black/5 rounded-2xl w-full mb-3"
-                    style={{
-                        padding: Platform.OS === 'android' ? 10 : 18,
-                    }}
-                >
-                    <TextInput
-                        placeholder="Password"
-                        placeholderTextColor={'gray'}
-                        secureTextEntry
-                        value={password}
-                        onChangeText={setPassword}
-                        style={{
-                            fontSize: Platform.OS === 'android' ? 14 : 18,
-                        }}
-                    />
-                </Animated.View>
+                    <Animated.View
+                        entering={FadeInDown.delay(400).duration(1000).springify()}
+                        className="bg-black/5 p-4 rounded-2xl w-full"
+                    >
+                        <TextInput
+                            placeholder="Password"
+                            placeholderTextColor={'gray'}
+                            secureTextEntry
+                            value={password}
+                            onChangeText={setPassword}
+                            style={{
+                                fontSize: 14,
+                                paddingVertical: Platform.OS === 'android' ? 8 : 12,
+                            }}
+                        />
+                    </Animated.View>
+
                     <Animated.View
                         entering={FadeInDown.delay(600).duration(1000).springify()}
                         className="w-full"
@@ -176,5 +170,3 @@ export default function SignUpScreen() {
         </LinearGradient>
     );
 }
-
-const styles = StyleSheet.create({});

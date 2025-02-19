@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 15,
     marginVertical: 15,
+    marginBottom: 110,
   },
   header: {
     fontSize: 20,
@@ -150,5 +151,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
+ 
 export default CampusMapRoutes;
