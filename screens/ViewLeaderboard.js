@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../lib/supabase';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get('window');
 
@@ -111,12 +112,12 @@ export default function ViewLeaderboard() {
   const renderHeader = () => (
     <View style={styles.headerContainer}>
       <View style={styles.headerTopRow}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Icon name="arrow-left" size={24} color="black" />
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="chevron-back-circle" size={36} color="#FFAC1C" />
+      </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Rankings</Text>
           <LinearGradient
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'black',
     marginBottom: 8,
@@ -465,7 +466,9 @@ const styles = StyleSheet.create({
     padding: 8,
     marginRight: 16,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    right: 10,
+    bottom: 10,
+    // backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   headerTitleContainer: {
     flex: 1,

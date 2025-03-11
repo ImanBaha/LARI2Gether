@@ -127,12 +127,7 @@ const ViewParticipants = () => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <LinearGradient
-            colors={['#FFAC1C', '#FFC107']}
-            style={styles.backButtonGradient}
-          >
-            <Ionicons name="chevron-back" size={24} color="#fff" />
-          </LinearGradient>
+          <Ionicons name="chevron-back-circle" size={36} color="#FFAC1C" />
         </TouchableOpacity>
 
         <Animatable.View 
@@ -203,10 +198,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 16,
     left: 16,
     zIndex: 10,
+    padding: 3,
   },
   backButtonGradient: {
     width: 40,
@@ -224,7 +220,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   title: {
-    fontSize: 28,
+    fontSize: 27,
     fontWeight: '700',
     color: '#fff',
     textAlign: 'center',

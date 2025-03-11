@@ -54,9 +54,14 @@ const Note = ({ navigation }) => {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.headerContainer}>
-          <TouchableOpacity style={styles.goBackButton} onPress={handleGoBack}>
-            <Ionicons name="arrow-back" size={30} color="#FFAC1C" />
-          </TouchableOpacity>
+
+        <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="chevron-back-circle" size={38} color="#FFAC1C" />
+      </TouchableOpacity>
+
           <Text style={styles.header}>Running Journal</Text>
           <TouchableOpacity style={styles.createButton} onPress={handleCreateNote}>
             <Ionicons name="add" size={30} color="#fff" />
@@ -100,7 +105,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  goBackButton: {
+  backButton: {
     backgroundColor: 'transparent',
     padding: 10,
     borderRadius: 50,

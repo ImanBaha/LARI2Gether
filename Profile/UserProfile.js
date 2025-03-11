@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Avatar from '../components/Avatar'; // Import the Avatar component
+import { Ionicons } from "@expo/vector-icons";
 
 const UserProfile = () => {
   const navigation = useNavigation();
@@ -63,9 +64,12 @@ const UserProfile = () => {
       <ScrollView style={styles.scrollView}>
         {/* Header Section */}
         <View style={styles.headerSection}>
-          <TouchableOpacity style={styles.goBackIcon} onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={28} color="#FFAC1C" />
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="chevron-back-circle" size={38} color="#FFAC1C" />
+        </TouchableOpacity>
           <Text style={styles.headerText}>User Profile</Text>
         </View>
 
@@ -167,7 +171,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     paddingHorizontal: 10,
   },
-  goBackIcon: {
+  backButton: {
     position: 'absolute',
     top: 40,
     left: 20,

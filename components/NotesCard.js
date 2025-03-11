@@ -65,7 +65,7 @@ const NotesCard = ({ note }) => {
         </View>
       </View>
 
-      {/* Created & Updated Timestamps */}
+      {/* Created & Updated Timestamps
       {(note.created_at || note.updated_at) && (
         <View style={styles.timestampsSection}>
           {note.created_at && (
@@ -79,7 +79,7 @@ const NotesCard = ({ note }) => {
             </Text>
           )}
         </View>
-      )}
+      )} */}
 
       {/* Action Buttons */}
       <View style={styles.buttonContainer}>

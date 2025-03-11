@@ -232,14 +232,14 @@ const UpdateCh = () => {
     >
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => navigation.goBack()}
-          >
-            <Text>
-              <Ionicons name="arrow-back" size={24} color="#FFAC1C" />
-            </Text>
-          </TouchableOpacity>
+
+        <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="chevron-back-circle" size={36} color="#FFAC1C" />
+      </TouchableOpacity>
+
           <Text style={styles.header}>Update Challenge</Text>
           <View style={styles.headerRight} />
         </View>
@@ -372,7 +372,7 @@ const UpdateCh = () => {
               {uploading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Update Challenge</Text>
+                <Text style={styles.buttonText}>Save</Text>
               )}
             </TouchableOpacity>
             

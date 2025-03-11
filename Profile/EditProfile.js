@@ -122,12 +122,12 @@ const EditProfile = ({ navigation }) => {
     >
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => navigation.goBack()}
-          >
-            <Ionicons name="arrow-back" size={24} color="#FFAC1C" />
-          </TouchableOpacity>
+        <TouchableOpacity
+  style={styles.backButton}
+  onPress={() => navigation.goBack()}
+>
+  <Ionicons name="chevron-back-circle" size={36} color="#FFAC1C" />
+</TouchableOpacity>
           <Text style={styles.header}>Edit Profile</Text>
           <View style={styles.headerRight} />
         </View>

@@ -180,14 +180,14 @@ const AddCh = ({ navigation }) => {
   >
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => navigation.goBack()}
-        >
-          <Text>
-            <Ionicons name="arrow-back" size={24} color="#FFAC1C" />
-          </Text>
-        </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="chevron-back-circle" size={36} color="#FFAC1C" />
+      </TouchableOpacity>
+
         <Text style={styles.header}>Create New Challenge</Text>
         <View style={styles.headerRight} />
       </View>
@@ -310,7 +310,7 @@ const AddCh = ({ navigation }) => {
               {uploading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Create Challenge</Text>
+                <Text style={styles.buttonText}>Create</Text>
               )}
             </TouchableOpacity>
             

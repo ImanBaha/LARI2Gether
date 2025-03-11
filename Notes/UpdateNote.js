@@ -79,8 +79,11 @@ const UpdateNote = () => {
   return (
     <LinearGradient colors={['#0066b2', '#ADD8E6', '#F0FFFF']} style={styles.container}>
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={28} color="#FFAC1C" />
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="chevron-back-circle" size={34} color="#FFAC1C" />
       </TouchableOpacity>
 
       <Text style={styles.header}>Update Running Journal</Text>
@@ -154,8 +157,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 50,
-    left: 15,
+    top: 45,
+    left: 10,
     zIndex: 1,
   },
   header: {

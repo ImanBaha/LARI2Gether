@@ -60,13 +60,16 @@ const OldCampusLoopDetails = ({ route }) => {
     <View style={styles.container}>
       <ScrollView>
         {/* Back Button */}
-                        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                          <Ionicons name="arrow-back" size={24} color="white" />
-                        </TouchableOpacity>
+                      <TouchableOpacity
+                                  style={styles.backButton}
+                                  onPress={() => navigation.goBack()}
+                                >
+                                  <Ionicons name="chevron-back-circle" size={38} color="#FFAC1C" />
+                                </TouchableOpacity>
         {/* Location and Title Section */}
         <View style={styles.titleContainer}>
           <TouchableOpacity style={styles.locationIcon} onPress={() => openMap(3.685421,101.527183)}>
-            <Ionicons name="location-sharp" size={30} color="white" />
+            <Ionicons name="location-sharp" size={26} color="white" />
           </TouchableOpacity>
           <View style={styles.titleCard}>
             <Text style={styles.titleText}>{name}</Text>
@@ -124,7 +127,7 @@ const styles = StyleSheet.create({
     top: 20,
     left: 10,
     zIndex: 20,
-    backgroundColor: "#0096FF",
+    // backgroundColor: "#0096FF",
     padding: 10,
     borderRadius: 50,
     shadowColor: "#000",
@@ -133,7 +136,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   locationIcon: {
-    backgroundColor: "#0096FF",
+    backgroundColor: "#FFAC1C",
     padding: 10,
     borderRadius: 50,
     shadowColor: "#000",

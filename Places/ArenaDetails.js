@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking, StatusBar } from "react-native";
 import DetailsCard from "../components/DetailsCard"; // Import your updated DetailsCard component
-import { Ionicons } from "@expo/vector-icons"; // Import an icon library for the location icon
+import { Ionicons, MaterialIcons } from "@expo/vector-icons"; // Import an icon library for the location icon
 import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
+
 
 const { width } = Dimensions.get('window');
 
@@ -57,15 +58,22 @@ const ArenaDetails = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <StatusBar translucent backgroundColor="transparent" />
+      <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
+
         {/* Back Button */}
-                        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                          <Ionicons name="arrow-back" size={24} color="white" />
-                        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="chevron-back-circle" size={38} color="#FFAC1C" />
+          </TouchableOpacity>
+
+
         {/* Location and Title Section */}
         <View style={styles.titleContainer}>
           <TouchableOpacity style={styles.locationIcon} onPress={() => openMap(3.728856, 101.532560)}>
-            <Ionicons name="location-sharp" size={30} color="white" />
+            <Ionicons name="location-sharp" size={26} color="white" />
           </TouchableOpacity>
           <View style={styles.titleCard}>
             <Text style={styles.titleText}>{name}</Text>
@@ -86,6 +94,7 @@ const ArenaDetails = ({ route }) => {
             <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au8.jpg" }} />
             <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au9.jpg" }} />
           </ScrollView>
+          
         </View>
 
         {/* Details Card Below Image Slider */}
@@ -121,9 +130,9 @@ const styles = StyleSheet.create({
   backButton: {
     position: "absolute",
     top: 20,
-    left: 10,
+    left: 5,
     zIndex: 20,
-    backgroundColor: "#0096FF",
+    // backgroundColor: "#0096FF",
     padding: 10,
     borderRadius: 50,
     shadowColor: "#000",
@@ -132,7 +141,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   locationIcon: {
-    backgroundColor: "#0096FF",
+    backgroundColor: "#FFAC1C",
     padding: 10,
     borderRadius: 50,
     shadowColor: "#000",

@@ -148,7 +148,7 @@ const ViewCh = () => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="chevron-back-circle" size={32} color="#FFAC1C" />
+          <Ionicons name="chevron-back-circle" size={36} color="#FFAC1C" />
         </TouchableOpacity>
 
         <Animatable.View 
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 16,
+    top: 12,
     left: 16,
     zIndex: 10,
     padding: 8,

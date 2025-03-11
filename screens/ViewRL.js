@@ -73,7 +73,7 @@ const ViewRL = ({ route, navigation }) => {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back-circle" size={32} color="#FFAC1C" />
+            <Ionicons name="chevron-back-circle" size={36} color="#FFAC1C" />
           </TouchableOpacity>
           <Text style={styles.header}>Run Level</Text>
         </View>
@@ -103,10 +103,10 @@ const ViewRL = ({ route, navigation }) => {
           </Text>
         </View>
 
-        <Text style={styles.sectionTitle}>All Levels</Text>
+          <Text style={styles.sectionTitle}>All Levels</Text>
         <View style={styles.levelCardsContainer}>
           {levels.map((item) => (
-            <TouchableOpacity
+            <View
               key={item.level}
               style={[
                 styles.levelCard,
@@ -133,7 +133,7 @@ const ViewRL = ({ route, navigation }) => {
                   </View>
                 )}
               </LinearGradient>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       </ScrollView>
