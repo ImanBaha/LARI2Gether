@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking } from "react-native";
-import DetailsCard from "../components/DetailsCard"; // Import your updated DetailsCard component
-import { Ionicons } from "@expo/vector-icons"; // Import an icon library for the location icon
-import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
+import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking, StatusBar } from "react-native";
+import * as Animatable from 'react-native-animatable'; // Add this import
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import DetailsCard from "../components/DetailsCard";
 
 const { width } = Dimensions.get('window');
 
@@ -66,43 +67,77 @@ const KZCollegeDetails = ({ route }) => {
                            <Ionicons name="chevron-back-circle" size={38} color="#FFAC1C" />
                          </TouchableOpacity>
 
-        {/* Location and Title Section */}
-        <View style={styles.titleContainer}>
-          <TouchableOpacity style={styles.locationIcon} onPress={() => openMap(3.723245,101.518724)}>
-            <Ionicons name="location-sharp" size={26} color="white" />
-          </TouchableOpacity>
-          <View style={styles.titleCard}>
-            <Text style={styles.titleText}>{name}</Text>
-          </View>
-        </View>
+        {/* Animated Location and Title Section */}
+      <Animatable.View 
+        style={styles.titleContainer}
+        animation="slideInRight"
+        duration={1000}
+        delay={300}
+      >
+        <TouchableOpacity 
+          style={styles.locationIcon} 
+          onPress={() => openMap(3.723245,101.518724)}
+        >
+          <Ionicons name="location-sharp" size={26} color="white" />
+        </TouchableOpacity>
+        <Animatable.View 
+          style={styles.titleCard}
+          animation="fadeIn"
+          duration={800}
+          delay={500}
+        >
+          <Text style={styles.titleText}>{name}</Text>
+        </Animatable.View>
+      </Animatable.View>
 
-        {/* Image Slider */}
-        <View style={styles.mainImageContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            ref={scrollViewRef}
-            pagingEnabled
-          >
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc1.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc2.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc3.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc4%20.jpg" }}/>
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc5.jpg" }} />
-          </ScrollView>
-        </View>
+      {/* Animated Image Slider */}
+      <Animatable.View 
+        style={styles.mainImageContainer}
+        animation="fadeIn"
+        duration={1000}
+      >
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          ref={scrollViewRef}
+          pagingEnabled
+        >
+          {[
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc1.jpg",
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc2.jpg",
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc3.jpg",
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc4%20.jpg",
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/zaba%20collage/zc5.jpg"
+          ].map((uri, index) => (
+            <Animatable.View
+              key={index}
+              animation="fadeIn"
+              duration={1000}
+              delay={index * 200}
+            >
+              <Image style={styles.mainImage} source={{ uri }} />
+            </Animatable.View>
+          ))}
+        </ScrollView>
+      </Animatable.View>
 
-        {/* Details Card Below Image Slider */}
+      {/* Animated Details Card */}
+      <Animatable.View
+        animation="slideInUp"
+        duration={1000}
+        delay={600}
+      >
         <DetailsCard
           title={name}
           description={description}
-          additionalDescription="For LARI2Gether users, Zaba College is more than just a hangout spot. It’s a great place to warm up with light activities before a run or to cool down and socialize post-run. The blend of sports facilities and community vibes makes it a perfect hub for group activities and fostering connections among runners."
+          additionalDescription="For LARI2Gether users, Zaba College is more than just a hangout spot. It's a great place to warm up with light activities before a run or to cool down and socialize post-run. The blend of sports facilities and community vibes makes it a perfect hub for group activities and fostering connections among runners."
           location="Kampus Sultan Azlan Shah UPSI, Proton City"
-          totalDistance="1.2km per lap (Standard Track)"
+          totalDistance="1.2 km per lap (Standard Track)"
           difficulty={3}
           safety={3}
           favLocation={4}
         />
+      </Animatable.View>
       </ScrollView>
     </View> 
   );
@@ -121,6 +156,7 @@ const styles = StyleSheet.create({
     right: 20,
     left: 20,
     zIndex: 10,
+    opacity: 0.95, // Add slight transparency for better visual effect
   },
   backButton: {
     position: "absolute",
@@ -154,6 +190,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
+    transform: [{ scale: 1 }],
   },
   titleText: {
     fontSize: 18,
@@ -168,6 +205,7 @@ const styles = StyleSheet.create({
     width: width,
     height: 270,
     resizeMode: 'cover',
+    overflow: 'hidden',
   },
 });
 

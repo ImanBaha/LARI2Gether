@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 5,
-    color: '#ffffff',
+    color: '#28282B',
   },
 });
 

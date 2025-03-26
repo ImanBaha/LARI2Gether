@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking } from "react-native";
-import DetailsCard from "../components/DetailsCard"; // Import your updated DetailsCard component
-import { Ionicons } from "@expo/vector-icons"; // Import an icon library for the location icon
-import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
+import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking, StatusBar } from "react-native";
+import * as Animatable from 'react-native-animatable'; // Add this import
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import DetailsCard from "../components/DetailsCard";
+
 
 const { width } = Dimensions.get('window');
 
@@ -65,43 +67,78 @@ const NewCampusLoopDetails = ({ route }) => {
           >
             <Ionicons name="chevron-back-circle" size={38} color="#FFAC1C" />
           </TouchableOpacity>
-        {/* Location and Title Section */}
-        <View style={styles.titleContainer}>
-          <TouchableOpacity style={styles.locationIcon} onPress={() => openMap(3.726442,101.531040)}>
-            <Ionicons name="location-sharp" size={26} color="white" />
-          </TouchableOpacity>
-          <View style={styles.titleCard}>
-            <Text style={styles.titleText}>{name}</Text>
-          </View>
-        </View>
 
-        {/* Image Slider */}
-        <View style={styles.mainImageContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            ref={scrollViewRef}
-            pagingEnabled
-          >
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/view7.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/nc8.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/nc1.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/nc7.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/n6.jpg" }} />
-          </ScrollView>
-        </View>
+        {/* Animated Location and Title Section */}
+      <Animatable.View 
+        style={styles.titleContainer}
+        animation="slideInRight"
+        duration={1000}
+        delay={300}
+      >
+        <TouchableOpacity 
+          style={styles.locationIcon} 
+          onPress={() => openMap(3.726442,101.531040)}
+        >
+          <Ionicons name="location-sharp" size={26} color="white" />
+        </TouchableOpacity>
+        <Animatable.View 
+          style={styles.titleCard}
+          animation="fadeIn"
+          duration={800}
+          delay={500}
+        >
+          <Text style={styles.titleText}>{name}</Text>
+        </Animatable.View>
+      </Animatable.View>
 
-        {/* Details Card Below Image Slider */}
+      {/* Animated Image Slider */}
+      <Animatable.View 
+        style={styles.mainImageContainer}
+        animation="fadeIn"
+        duration={1000}
+      >
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          ref={scrollViewRef}
+          pagingEnabled
+        >
+          {[
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/view7.jpg",
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/nc8.jpg",
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/nc1.jpg",
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/nc7.jpg",
+            "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/new%20campus/n6.jpg"
+          ].map((uri, index) => (
+            <Animatable.View
+              key={index}
+              animation="fadeIn"
+              duration={1000}
+              delay={index * 200}
+            >
+              <Image style={styles.mainImage} source={{ uri }} />
+            </Animatable.View>
+          ))}
+        </ScrollView>
+      </Animatable.View>
+
+      {/* Animated Details Card */}
+      <Animatable.View
+        animation="slideInUp"
+        duration={1000}
+        delay={600}
+      >
         <DetailsCard
           title={name}
           description={description}
-          additionalDescription="With its wide roads and open landscapes, the campus is ideal for LARI2Gether users aiming to build endurance or train for long-distance goals. Whether you’re running solo or joining a community run, the expansive and scenic surroundings make every stride enjoyable and inspiring."
+          additionalDescription="With its wide roads and open landscapes, the campus is ideal for LARI2Gether users aiming to build endurance or train for long-distance goals. Whether you're running solo or joining a community run, the expansive and scenic surroundings make every stride enjoyable and inspiring."
           location="Kampus Sultan Azlan Shah UPSI, Proton City"
-          totalDistance="5km per lap (Standard Track)"
+          totalDistance="5 km per lap (Standard Track)"
           difficulty={4}
           safety={4}
           favLocation={5}
         />
+      </Animatable.View>
       </ScrollView>
     </View>
   );
@@ -120,6 +157,7 @@ const styles = StyleSheet.create({
     right: 20,
     left: 20,
     zIndex: 10,
+    opacity: 0.95,
   },
   backButton: {
     position: "absolute",
@@ -153,6 +191,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
+    transform: [{ scale: 1 }],
   },
   titleText: {
     fontSize: 18,
@@ -160,8 +199,9 @@ const styles = StyleSheet.create({
     color: "#0C215E",
   },
   mainImageContainer: {
-    height: 270, // Set a fixed height for the slider
+    height: 270,
     marginTop: 0,
+    overflow: 'hidden', // Add this to contain animations
   },
   mainImage: {
     width: width,

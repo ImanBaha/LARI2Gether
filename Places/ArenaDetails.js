@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity, Linking, StatusBar } from "react-native";
-import DetailsCard from "../components/DetailsCard"; // Import your updated DetailsCard component
-import { Ionicons, MaterialIcons } from "@expo/vector-icons"; // Import an icon library for the location icon
-import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
+import * as Animatable from 'react-native-animatable'; // Add this import
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import DetailsCard from "../components/DetailsCard";
 
 
 const { width } = Dimensions.get('window');
@@ -61,53 +62,91 @@ const ArenaDetails = ({ route }) => {
       <StatusBar translucent backgroundColor="transparent" />
       <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
 
-        {/* Back Button */}
+        {/* Animated Back Button */}
+        {/* <Animatable.View 
+          animation="fadeOut"
+          duration={1000}
+        > */}
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
             <Ionicons name="chevron-back-circle" size={38} color="#FFAC1C" />
           </TouchableOpacity>
+        {/* </Animatable.View> */}
 
-
-        {/* Location and Title Section */}
-        <View style={styles.titleContainer}>
-          <TouchableOpacity style={styles.locationIcon} onPress={() => openMap(3.728856, 101.532560)}>
+        {/* Animated Location and Title Section */}
+        <Animatable.View 
+          style={styles.titleContainer}
+          animation="slideInRight"
+          duration={1000}
+          delay={300}
+        >
+          <TouchableOpacity 
+            style={styles.locationIcon} 
+            onPress={() => openMap(3.728856, 101.532560)}
+          >
             <Ionicons name="location-sharp" size={26} color="white" />
           </TouchableOpacity>
-          <View style={styles.titleCard}>
+          <Animatable.View 
+            style={styles.titleCard}
+            animation="fadeIn"
+            duration={800}
+            delay={500}
+          >
             <Text style={styles.titleText}>{name}</Text>
-          </View>
-        </View>
+          </Animatable.View>
+        </Animatable.View>
 
-        {/* Image Slider */}
-        <View style={styles.mainImageContainer}>
+        {/* Animated Image Slider */}
+        <Animatable.View 
+          style={styles.mainImageContainer}
+          animation="fadeIn"
+          duration={1000}
+        >
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             ref={scrollViewRef}
             pagingEnabled
           >
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/arena%20UPSI/au1.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcmVuYSBVUFNJL2F1MS5qcGciLCJpYXQiOjE3MzY0ODY2NDgsImV4cCI6MjA1MTg0NjY0OH0.wIBHDgNag4-919g9JF-Crg8czQTNFdTHhMs9oycOLlw" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au2.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au3.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au8.jpg" }} />
-            <Image style={styles.mainImage} source={{ uri: "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au9.jpg" }} />
+            {/* Wrap each Image in Animatable.View */}
+            {[
+              "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/sign/arena%20UPSI/au1.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhcmVuYSBVUFNJL2F1MS5qcGciLCJpYXQiOjE3MzY0ODY2NDgsImV4cCI6MjA1MTg0NjY0OH0.wIBHDgNag4-919g9JF-Crg8czQTNFdTHhMs9oycOLlw",
+              "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au2.jpg",
+              "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au3.jpg",
+              "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au8.jpg",
+              "https://adzrewydpoxhzrdmnmhm.supabase.co/storage/v1/object/public/arena%20UPSI/au9.jpg"
+            ].map((uri, index) => (
+              <Animatable.View
+                key={index}
+                animation="fadeIn"
+                duration={1000}
+                delay={index * 200}
+              >
+                <Image style={styles.mainImage} source={{ uri }} />
+              </Animatable.View>
+            ))}
           </ScrollView>
-          
-        </View>
+        </Animatable.View>
 
-        {/* Details Card Below Image Slider */}
-        <DetailsCard
-          title={name}
-          description={description}
-          additionalDescription="With its accessible location and community-focused design, Arena UPSI supports runners in building endurance, staying active, and connecting through group runs and challenges, aligning perfectly with LARI2Gether's mission to foster a vibrant running community."
-          location="Kampus Sultan Azlan Shah UPSI, Proton City"
-          totalDistance="400m per lap (Standard Track)"
-          difficulty={2}
-          safety={4}
-          favLocation={4}
-        />
+        {/* Animated Details Card */}
+        <Animatable.View
+          animation="slideInUp"
+          duration={1000}
+          delay={600}
+        >
+          <DetailsCard
+            title={name}
+            description={description}
+            additionalDescription="With its accessible location and community-focused design, Arena UPSI supports runners in building endurance, staying active, and connecting through group runs and challenges, aligning perfectly with LARI2Gether's mission to foster a vibrant running community."
+            location="Kampus Sultan Azlan Shah UPSI, Proton City"
+            totalDistance="400m per lap (Standard Track)"
+            difficulty={2}
+            safety={4}
+            favLocation={4}
+          />
+        </Animatable.View>
       </ScrollView>
     </View>
   );
@@ -126,6 +165,7 @@ const styles = StyleSheet.create({
     right: 20,
     left: 20,
     zIndex: 10,
+    opacity: 0.95, // Add slight transparency for better visual effect
   },
   backButton: {
     position: "absolute",
@@ -159,6 +199,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
+    transform: [{ scale: 1 }],
   },
   titleText: {
     fontSize: 18,
@@ -168,6 +209,7 @@ const styles = StyleSheet.create({
   mainImageContainer: {
     height: 270, // Set a fixed height for the slider
     marginTop: 0,
+    overflow: 'hidden',
   },
   mainImage: {
     width: width,

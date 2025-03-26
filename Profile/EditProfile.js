@@ -220,7 +220,7 @@ const EditProfile = ({ navigation }) => {
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Save Changes</Text>
+                <Text style={styles.buttonText}>Save</Text>
               )}
             </TouchableOpacity>
             

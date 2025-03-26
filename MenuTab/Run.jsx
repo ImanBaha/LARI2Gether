@@ -363,8 +363,8 @@ const loadPastRuns = async () => {
         region={{
           latitude: location?.coords.latitude || 3.41083,
           longitude: location?.coords.longitude || 101.31330,
-          latitudeDelta: 0.001,
-          longitudeDelta: 0.001,
+          latitudeDelta: 0.0015,
+          longitudeDelta: 0.0015,
         }}
         showsUserLocation={true}
         showsMyLocationButton={true}

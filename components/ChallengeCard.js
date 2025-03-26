@@ -10,10 +10,21 @@ const ChallengeCard = ({ challenge }) => {
   const [participantCount, setParticipantCount] = useState(0);
   const [isJoined, setIsJoined] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCreator, setIsCreator] = useState(false);
 
   useEffect(() => {
     fetchParticipantData();
+    checkIfCreator();
   }, [challenge.id]);
+  
+  const checkIfCreator = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsCreator(user.id === challenge.created_by_id);
+    } catch (error) {
+      console.error("Error checking creator status:", error);
+    }
+  };
 
   const fetchParticipantData = async () => {
     try {
@@ -76,30 +87,56 @@ const ChallengeCard = ({ challenge }) => {
   };
 
   const handleDelete = async () => {
-    Alert.alert(
-      "Delete Challenge",
-      "Are you sure you want to delete this challenge?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            const { error } = await supabase
-              .from("challenge")
-              .delete()
-              .eq("id", challenge.id);
-
-            if (error) {
-              console.error("Error deleting challenge:", error);
-              Alert.alert("Error", "Failed to delete challenge.");
-            } else {
-              Alert.alert("Success", "Challenge deleted successfully!");
-            }
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user.id !== challenge.created_by_id) {
+        Alert.alert(
+          "Permission Denied",
+          "You can only delete challenges that you have created."
+        );
+        return;
+      }
+  
+      Alert.alert(
+        "Delete Challenge",
+        "Are you sure you want to delete this challenge?",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: async () => {
+              const { error } = await supabase
+                .from("challenge")
+                .delete()
+                .eq("id", challenge.id);
+  
+              if (error) {
+                console.error("Error deleting challenge:", error);
+                Alert.alert("Error", "Failed to delete challenge.");
+              } else {
+                Alert.alert("Success", "Challenge deleted successfully!");
+              }
+            },
           },
-        },
-      ]
-    );
+        ]
+      );
+    } catch (error) {
+      console.error("Error in handleDelete:", error);
+      Alert.alert("Error", "An error occurred while trying to delete the challenge.");
+    }
+  };
+
+  const handleEdit = () => {
+    if (!isCreator) {
+      Alert.alert(
+        "Permission Denied",
+        "You can only edit challenges that you have created."
+      );
+      return;
+    }
+    navigation.navigate("UpdateCh", { id: challenge.id });
   };
 
   return (
@@ -188,19 +225,23 @@ const ChallengeCard = ({ challenge }) => {
                 />
               </View>
 
-              <TouchableOpacity
-                style={[styles.iconButton, styles.editButton]}
-                onPress={() => navigation.navigate("UpdateCh", { id: challenge.id })}
-              >
-                <Ionicons name="create-outline" size={20} color="#0066b2" />
-              </TouchableOpacity>
+              {isCreator ? (
+  <>
+    <TouchableOpacity
+      style={[styles.iconButton, styles.editButton]}
+      onPress={handleEdit}  // Change this line
+    >
+      <Ionicons name="create-outline" size={20} color="#0066b2" />
+    </TouchableOpacity>
 
-              <TouchableOpacity 
-                style={[styles.iconButton, styles.deleteButton]}
-                onPress={handleDelete}
-              >
-                <Ionicons name="trash-outline" size={20} color="#e74c3c" />
-              </TouchableOpacity>
+    <TouchableOpacity 
+      style={[styles.iconButton, styles.deleteButton]}
+      onPress={handleDelete}
+    >
+      <Ionicons name="trash-outline" size={20} color="#e74c3c" />
+    </TouchableOpacity>
+  </>
+) : null}
             </View>
           </View>
         </View>
