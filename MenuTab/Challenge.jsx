@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import { filter } from 'lodash';
 import { supabase } from '../lib/supabase';
 import ChallengeCard from '../components/ChallengeCard';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
+import * as Animatable from 'react-native-animatable';
 
 const Challenge = ({ navigation }) => {
   const [fetchError, setFetchError] = useState(null);
@@ -13,6 +15,7 @@ const Challenge = ({ navigation }) => {
   const [isDateSorted, setIsDateSorted] = useState(false);
   const [showJoinedOnly, setShowJoinedOnly] = useState(false);
   const [filteredChallenges, setFilteredChallenges] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchChallenges = async () => {
     try {
@@ -59,9 +62,50 @@ const Challenge = ({ navigation }) => {
     });
   };
 
+  const filterChallenges = (challenges, query) => {
+    if (!query) return challenges;
+    
+    return filter(challenges, challenge => {
+      const searchTerm = query.toLowerCase();
+      return (
+        (challenge.title && challenge.title.toLowerCase().includes(searchTerm)) ||
+        (challenge.description && challenge.description.toLowerCase().includes(searchTerm)) ||
+        (challenge.location && challenge.location.toLowerCase().includes(searchTerm))
+      );
+    });
+  };
+
   useEffect(() => {
     fetchChallenges();
   }, [isDateSorted, showJoinedOnly]);
+
+  useEffect(() => {
+    const applyFilters = async () => {
+      let filtered = challenges;
+      
+      // Apply search filter
+      if (searchQuery) {
+        filtered = filterChallenges(filtered, searchQuery);
+      }
+      
+      // Apply joined filter
+      if (showJoinedOnly) {
+        const { data: { user } } = await supabase.auth.getUser();
+        filtered = filtered.filter(challenge => 
+          challenge.participantsID && challenge.participantsID.includes(user.id)
+        );
+      }
+      
+      // Apply date sort
+      if (isDateSorted) {
+        filtered = sortChallengesByDate(filtered);
+      }
+      
+      setFilteredChallenges(filtered);
+    };
+
+    applyFilters();
+  }, [challenges, searchQuery, showJoinedOnly, isDateSorted]);
 
   const handleCreateChallenge = () => {
     navigation.navigate('AddCh');
@@ -88,6 +132,30 @@ const Challenge = ({ navigation }) => {
     }
     setRefreshing(false);
   }, []);
+
+  const searchBar = (
+    <Animatable.View 
+      animation="fadeIn" 
+      duration={1000} 
+      style={styles.searchContainer}
+    >
+      <View style={styles.searchBar}>
+        <Ionicons name="search" size={20} color="#666" />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search challenges..."
+          placeholderTextColor="#666"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        {searchQuery ? (
+          <TouchableOpacity onPress={() => setSearchQuery('')}>
+            <Ionicons name="close-circle" size={20} color="#666" />
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    </Animatable.View>
+  );
 
   return (
     <LinearGradient colors={['#0066b2', '#ADD8E6', '#F0FFFF']} style={styles.gradient}>
@@ -141,6 +209,9 @@ const Challenge = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Search Bar */}
+        {searchBar}
 
         {/* Error Message */}
         {fetchError && <Text style={styles.error}>{fetchError}</Text>}
@@ -200,6 +271,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFAA33',
     padding: 10,
     borderRadius: 50,
+  },
+  searchContainer: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginBottom: 8,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 25,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#333',
   },
   error: {
     color: 'red',
