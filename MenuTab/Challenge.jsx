@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingVertical: 6,
     marginBottom: 8,
   },
   searchBar: {
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 25,
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: 10,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
