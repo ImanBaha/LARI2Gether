@@ -58,7 +58,7 @@ const Challenge = ({ navigation }) => {
     return [...data].sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
-      return dateA - dateB;
+      return dateB - dateA; // Changed from dateA - dateB to sort in descending order
     });
   };
 

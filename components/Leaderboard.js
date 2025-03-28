@@ -39,15 +39,17 @@ export default function TopThreeLeaderboard() {
       setIsLoading(true);
       setError(null);
 
+      // First, get all runs with their associated user profiles
       const { data, error } = await supabase
         .from('runs')
         .select(`
+          id,
           distance,
           profiles:userid (
             username,
             id
           )
-        `);
+        `); // Added id to count runs accurately
 
       if (error) throw error;
 
@@ -73,26 +75,34 @@ export default function TopThreeLeaderboard() {
             username: username || 'Anonymous User',
             totalDistance: 0,
             runCount: 0,
+            runs: [] // Track unique run IDs
           };
         }
 
-        // Ensure distance is a valid number
+        // Ensure distance is a valid number and run hasn't been counted
         const distance = parseFloat(run.distance);
-        if (!isNaN(distance)) {
+        if (!isNaN(distance) && !acc[userId].runs.includes(run.id)) {
           acc[userId].totalDistance += distance;
           acc[userId].runCount += 1;
+          acc[userId].runs.push(run.id); // Track this run
         }
         
         return acc;
       }, {});
 
+      // Transform the data for display
       const sortedData = Object.values(userTotals)
         .filter(user => user.runCount > 0) // Only include users with valid runs
+        .map(user => ({
+          userid: user.userid,
+          username: user.username,
+          totalDistance: Math.round(user.totalDistance * 100) / 100,
+          runCount: user.runCount // This should now be accurate
+        }))
         .sort((a, b) => b.totalDistance - a.totalDistance)
         .map((user, index) => ({
           ...user,
-          rank: index + 1,
-          totalDistance: Math.round(user.totalDistance * 100) / 100,
+          rank: index + 1
         }))
         .slice(0, 3); // Only take top 3
 

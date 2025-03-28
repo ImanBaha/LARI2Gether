@@ -10,7 +10,15 @@ const YouTubeVideo = ({ videoId }) => {
         style={styles.video}
         javaScriptEnabled={true}
         domStorageEnabled={true}
-        source={{ uri: `https://www.youtube.com/embed/${videoId}` }}
+        allowsFullscreenVideo={true}
+        mediaPlaybackRequiresUserAction={false}
+        source={{
+          uri: `https://www.youtube.com/embed/${videoId}?playsinline=0&fs=1`,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'text/html',
+          }
+        }}
       />
     </View>
   );
@@ -18,7 +26,7 @@ const YouTubeVideo = ({ videoId }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 200, // Adjust the height as needed
+    height: 200,
     marginVertical: 5,
     borderRadius: 12,
     overflow: 'hidden',
